@@ -30,7 +30,8 @@ public enum GHConfig {
     GOLDENHEADS_LORE("goldenheads.lore", Collections.singletonList("&eIs this... an improved golden apple?")),
     GOLDENHEADS_MATERIAL("goldenheads.material", "PLAYER_HEAD"),
     GOLDENHEADS_SKULL_OWNER("goldenheads.skull-owner", "57a8704d-b3f4-4c8f-bea0-64675011fe7b"),
-    GOLDENHEADS_POTION_EFFECTS("goldenheads.potion-effects", Arrays.asList("ABSORPTION|120|2", "REGENERATION|2|4", "FIRE_RESISTANCE|10|1"));
+    // Format: POTION|DURATION IN SECONDS|LEVEL
+    GOLDENHEADS_POTION_EFFECTS("goldenheads.potion-effects", Arrays.asList("ABSORPTION|120|1", "REGENERATION|5|2"));
 
 
     private static Configuration config;
