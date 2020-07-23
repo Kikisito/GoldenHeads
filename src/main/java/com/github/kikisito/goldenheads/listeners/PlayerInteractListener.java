@@ -39,7 +39,7 @@ public class PlayerInteractListener implements Listener {
 
     @EventHandler
     public void onClick(PlayerInteractEvent e){
-        if(GoldenHead.isGoldenHead(plugin, e.getItem())) {
+        if(GoldenHead.isGoldenHead(plugin, e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
             e.getItem().setAmount(e.getItem().getAmount() - 1);
             Player player = e.getPlayer();
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, 100, 1);
