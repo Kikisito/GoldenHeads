@@ -1,0 +1,18 @@
+goldenheads:
+  # If you want to change the material, check https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+  # before modifying the value, otherwise it may break.
+  material: PLAYER_HEAD
+  # In case material is a player's head.
+  skull-owner: 57a8704d-b3f4-4c8f-bea0-64675011fe7b
+  display-name: "&6Golden Head"
+  lore:
+    - "&eAbsorption II (2:00)"
+    - "&eRegeneration III (0:02)"
+    - "&eFire Resistance (0:10)"
+  potion-effects:
+    # Please, check https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html if you
+    # are changing or adding potion effects. Any incorrect value can break the plugin.
+    # Format: EFFECT|DURATION (in seconds)|LEVEL
+    - ABSORPTION|120|2
+    - REGENERATION|2|3
+    - FIRE_RESISTANCE|10|1

@@ -6,7 +6,7 @@
 
     <groupId>com.github.kikisito</groupId>
     <artifactId>goldenheads</artifactId>
-    <version>SNAPSHOT</version>
+    <version>1.0-RC1</version>
     <packaging>jar</packaging>
 
     <name>GoldenHeads</name>

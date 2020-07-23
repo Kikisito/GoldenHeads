@@ -1,39 +1,55 @@
+/*
+ * Copyright (C) 2020  Kikisito (Kyllian)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.github.kikisito.goldenheads;
 
+import com.github.kikisito.goldenheads.enums.GHConfig;
+import com.github.kikisito.goldenheads.listeners.BlockPlaceListener;
+import com.github.kikisito.goldenheads.listeners.PlayerDeathListener;
+import com.github.kikisito.goldenheads.listeners.PlayerInteractListener;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.UUID;
-
 public final class Main extends JavaPlugin {
-    private NamespacedKey key;
+    private NamespacedKey recipe;
 
     @Override
     public void onEnable() {
-        this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
+        this.saveDefaultConfig();
+        GHConfig.setConfig(this.getConfig());
+        this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(this), this);
         this.registerRecipe();
     }
 
     @Override
     public void onDisable() {
-        this.getServer().removeRecipe(key);
+        this.getServer().removeRecipe(recipe);
     }
 
     public void registerRecipe(){
-        ItemStack goldenhead = new ItemStack(Material.PLAYER_HEAD);
-        ItemMeta itemMeta = goldenhead.getItemMeta();
-        ((SkullMeta) itemMeta).setOwningPlayer(this.getServer().getOfflinePlayer(UUID.fromString("57a8704d-b3f4-4c8f-bea0-64675011fe7b")));
-        itemMeta.setDisplayName(Utils.parseMessage("&eGolden Head"));
-        itemMeta.addEnchant(Enchantment.MENDING, 1, false);
-        goldenhead.setItemMeta(itemMeta);
-        key = new NamespacedKey(this, "golden_head");
-        ShapedRecipe shapedRecipe = new ShapedRecipe(key, goldenhead);
+        ItemStack goldenhead = GoldenHead.createHead(this);
+        // Recipe
+        recipe = new NamespacedKey(this, "golden_head");
+        ShapedRecipe shapedRecipe = new ShapedRecipe(recipe, goldenhead);
         shapedRecipe.shape("GGG", "GPG", "GGG");
         shapedRecipe.setIngredient('G', Material.GOLD_INGOT);
         shapedRecipe.setIngredient('P', Material.PLAYER_HEAD);

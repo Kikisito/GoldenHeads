@@ -1,4 +1,4 @@
-name: GoldenHead
+name: GoldenHeads
 version: ${project.version}
 main: com.github.kikisito.goldenheads.Main
 api-version: 1.16
