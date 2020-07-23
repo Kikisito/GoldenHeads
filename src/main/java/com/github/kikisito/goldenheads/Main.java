@@ -21,6 +21,7 @@ import com.github.kikisito.goldenheads.enums.GHConfig;
 import com.github.kikisito.goldenheads.listeners.BlockPlaceListener;
 import com.github.kikisito.goldenheads.listeners.PlayerDeathListener;
 import com.github.kikisito.goldenheads.listeners.PlayerInteractListener;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -38,6 +39,7 @@ public final class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
         if(GHConfig.DROP_PLAYER_HEAD_ON_DEATH.getBoolean()) this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(this), this);
         this.registerRecipe();
+        Metrics metrics = new Metrics(this, 8284);
     }
 
     @Override
