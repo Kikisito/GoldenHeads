@@ -36,7 +36,7 @@ public final class Main extends JavaPlugin {
         GHConfig.setConfig(this.getConfig());
         this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(this), this);
         this.getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
-        this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(this), this);
+        if(GHConfig.DROP_PLAYER_HEAD_ON_DEATH.getBoolean()) this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(this), this);
         this.registerRecipe();
     }
 

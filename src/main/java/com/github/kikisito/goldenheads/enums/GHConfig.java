@@ -31,7 +31,8 @@ public enum GHConfig {
     GOLDENHEADS_MATERIAL("goldenheads.material", "PLAYER_HEAD"),
     GOLDENHEADS_SKULL_OWNER("goldenheads.skull-owner", "57a8704d-b3f4-4c8f-bea0-64675011fe7b"),
     // Format: POTION|DURATION IN SECONDS|LEVEL
-    GOLDENHEADS_POTION_EFFECTS("goldenheads.potion-effects", Arrays.asList("ABSORPTION|120|1", "REGENERATION|5|2"));
+    GOLDENHEADS_POTION_EFFECTS("goldenheads.potion-effects", Arrays.asList("ABSORPTION|120|1", "REGENERATION|5|2")),
+    DROP_PLAYER_HEAD_ON_DEATH("drop-player-head-on-death", true);
 
 
     private static Configuration config;
@@ -63,6 +64,10 @@ public enum GHConfig {
     }
 
     public List<String> getList(){ return config.getStringList((String) this.value); }
+
+    public boolean getBoolean(){
+        return config.getBoolean((String) this.value, (boolean) this.def);
+    }
 
     public static void setConfig(Configuration config){
         GHConfig.config = config;

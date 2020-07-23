@@ -16,3 +16,5 @@ goldenheads:
     - ABSORPTION|120|2
     - REGENERATION|2|3
     - FIRE_RESISTANCE|10|1
+
+drop-player-head-on-death: true
