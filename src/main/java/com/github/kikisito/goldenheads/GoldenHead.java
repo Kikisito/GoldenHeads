@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class GoldenHead {
+    @SuppressWarnings("deprecation")
     public static ItemStack createHead(Main plugin){
         // Set material
         ItemStack goldenhead = new ItemStack(Material.valueOf(GHConfig.GOLDENHEADS_MATERIAL.getString()));
@@ -38,7 +39,8 @@ public class GoldenHead {
         NamespacedKey key = new NamespacedKey(plugin, "golden_head");
         itemMeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "GoldenHead");
         // Set owner
-        ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(GHConfig.GOLDENHEADS_SKULL_OWNER.getString())));
+        // UUID -> ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(GHConfig.GOLDENHEADS_SKULL_OWNER.getString())));
+        ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(GHConfig.GOLDENHEADS_SKULL_OWNER.getString()));
         // Set display name
         itemMeta.setDisplayName(Utils.parseMessage(GHConfig.GOLDENHEADS_NAME.getString()));
         // Set lore

@@ -3,7 +3,7 @@ goldenheads:
   # before modifying the value, otherwise it may break.
   material: PLAYER_HEAD
   # In case material is a player's head.
-  skull-owner: 57a8704d-b3f4-4c8f-bea0-64675011fe7b
+  skull-owner: "LegendaryJulien"
   display-name: "&6Golden Head"
   lore:
     - "&eAbsorption II (2:00)"
