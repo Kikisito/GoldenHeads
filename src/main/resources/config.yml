@@ -1,8 +1,9 @@
 goldenheads:
   # If you want to change the material, check https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
   # before modifying the value, otherwise it may break.
+  # It is also recommended to restart your server to register the new recipe correctly.
   material: PLAYER_HEAD
-  # In case material is a player's head.
+  # In case material is a player head.
   skull-owner: "LegendaryJulien"
   display-name: "&6Golden Head"
   lore:

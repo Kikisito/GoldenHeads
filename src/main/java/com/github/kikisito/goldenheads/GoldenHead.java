@@ -40,7 +40,9 @@ public class GoldenHead {
         itemMeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "GoldenHead");
         // Set owner
         // UUID -> ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(GHConfig.GOLDENHEADS_SKULL_OWNER.getString())));
-        ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(GHConfig.GOLDENHEADS_SKULL_OWNER.getString()));
+        if(goldenhead.getType() == Material.PLAYER_HEAD){
+            ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(GHConfig.GOLDENHEADS_SKULL_OWNER.getString()));
+        }
         // Set display name
         itemMeta.setDisplayName(Utils.parseMessage(GHConfig.GOLDENHEADS_NAME.getString()));
         // Set lore
