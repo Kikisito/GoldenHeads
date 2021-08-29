@@ -27,6 +27,9 @@ import java.util.List;
 public enum GHConfig {
     // Notes
     GOLDENHEADS_NAME("goldenheads.display-name", "&eGolden Head"),
+    GOLDENHEADS_DELAY("goldenheads.delay", 0),
+    GOLDENHEADS_FOOD_AMOUNT("goldenheads.food-amount", 6),
+    GOLDENHEADS_SATURATION_AMOUNT("goldenheads.saturation-amount", 14.4),
     GOLDENHEADS_LORE("goldenheads.lore", Collections.singletonList("&eIs this... an improved golden apple?")),
     GOLDENHEADS_MATERIAL("goldenheads.material", "PLAYER_HEAD"),
     GOLDENHEADS_SKULL_OWNER("goldenheads.skull-owner", "57a8704d-b3f4-4c8f-bea0-64675011fe7b"),
@@ -59,6 +62,11 @@ public enum GHConfig {
         this.def = def;
     }
 
+    GHConfig(String value, double def){
+        this.value = value;
+        this.def = def;
+    }
+
     public String getString(){
         return Utils.parseMessage(config.getString((String) this.value, (String) this.def));
     }
@@ -67,6 +75,18 @@ public enum GHConfig {
 
     public boolean getBoolean(){
         return config.getBoolean((String) this.value, (boolean) this.def);
+    }
+
+    public long getLong(){
+        return config.getLong((String) this.value, (long) this.def);
+    }
+
+    public int getInt(){
+        return config.getInt((String) this.value, (int) this.def);
+    }
+
+    public double getDouble(){
+        return config.getDouble((String) this.value, (double) this.def);
     }
 
     public static void setConfig(Configuration config){
