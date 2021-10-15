@@ -65,7 +65,7 @@ public class PlayerInteractListener implements Listener {
                 else player.setSaturation(playerSaturation + addSaturation);
                 // Adjust exhaustion
                 player.setExhaustion(0);
-            }, GHConfig.GOLDENHEADS_DELAY.getLong());
+            }, GHConfig.GOLDENHEADS_DELAY.getInt());
         }
     }
 }

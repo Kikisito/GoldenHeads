@@ -77,10 +77,6 @@ public enum GHConfig {
         return config.getBoolean((String) this.value, (boolean) this.def);
     }
 
-    public long getLong(){
-        return config.getLong((String) this.value, (long) this.def);
-    }
-
     public int getInt(){
         return config.getInt((String) this.value, (int) this.def);
     }
