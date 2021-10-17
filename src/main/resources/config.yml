@@ -10,7 +10,7 @@ goldenheads:
   # Amount of food the player will receive after eating the Golden Head. Defaults to 14.4
   saturation-amount: 14.4
   # In case material is a player head.
-  skull-owner: "LegendaryJulien"
+  skull-owner: "PhantomTupac"
   display-name: "&6Golden Head"
   lore:
     - "&eAbsorption II (2:00)"
@@ -24,4 +24,6 @@ goldenheads:
     - REGENERATION|2|3
     - FIRE_RESISTANCE|10|1
 
+# Other settings related to Golden Heads
 drop-player-head-on-death: true
+drop-player-head-only-when-killed-by-a-player: true

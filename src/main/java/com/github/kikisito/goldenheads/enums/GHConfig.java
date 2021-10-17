@@ -32,11 +32,11 @@ public enum GHConfig {
     GOLDENHEADS_SATURATION_AMOUNT("goldenheads.saturation-amount", 14.4),
     GOLDENHEADS_LORE("goldenheads.lore", Collections.singletonList("&eIs this... an improved golden apple?")),
     GOLDENHEADS_MATERIAL("goldenheads.material", "PLAYER_HEAD"),
-    GOLDENHEADS_SKULL_OWNER("goldenheads.skull-owner", "57a8704d-b3f4-4c8f-bea0-64675011fe7b"),
+    GOLDENHEADS_SKULL_OWNER("goldenheads.skull-owner", "PhantomTupac"),
     // Format: POTION|DURATION IN SECONDS|LEVEL
     GOLDENHEADS_POTION_EFFECTS("goldenheads.potion-effects", Arrays.asList("ABSORPTION|120|1", "REGENERATION|5|2")),
-    DROP_PLAYER_HEAD_ON_DEATH("drop-player-head-on-death", true);
-
+    DROP_PLAYER_HEAD_ON_DEATH("drop-player-head-on-death", true),
+    DROP_PLAYER_HEAD_ONLY_WHEN_KILLED_BY_A_PLAYER("drop-player-head-only-when-killed-by-a-player", true);
 
     private static Configuration config;
     private final Object value;

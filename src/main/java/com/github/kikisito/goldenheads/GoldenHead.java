@@ -39,7 +39,6 @@ public class GoldenHead {
         NamespacedKey key = new NamespacedKey(plugin, "golden_head");
         itemMeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "GoldenHead");
         // Set owner
-        // UUID -> ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(GHConfig.GOLDENHEADS_SKULL_OWNER.getString())));
         if(goldenhead.getType() == Material.PLAYER_HEAD){
             ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(GHConfig.GOLDENHEADS_SKULL_OWNER.getString()));
         }

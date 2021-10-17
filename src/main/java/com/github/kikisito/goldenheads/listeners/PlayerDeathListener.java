@@ -18,6 +18,7 @@
 package com.github.kikisito.goldenheads.listeners;
 
 import com.github.kikisito.goldenheads.Main;
+import com.github.kikisito.goldenheads.enums.GHConfig;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -35,10 +36,12 @@ public class PlayerDeathListener implements Listener {
 
     @EventHandler
     public void onBlockPlace(PlayerDeathEvent e){
-        ItemStack playerhead = new ItemStack(Material.PLAYER_HEAD);
-        ItemMeta phmeta = playerhead.getItemMeta();
-        ((SkullMeta) phmeta).setOwningPlayer(plugin.getServer().getOfflinePlayer(e.getEntity().getUniqueId()));
-        playerhead.setItemMeta(phmeta);
-        e.getDrops().add(playerhead);
+        if(!GHConfig.DROP_PLAYER_HEAD_ONLY_WHEN_KILLED_BY_A_PLAYER.getBoolean() || e.getEntity().getKiller() != null){
+            ItemStack playerhead = new ItemStack(Material.PLAYER_HEAD);
+            ItemMeta phmeta = playerhead.getItemMeta();
+            ((SkullMeta) phmeta).setOwningPlayer(plugin.getServer().getOfflinePlayer(e.getEntity().getUniqueId()));
+            playerhead.setItemMeta(phmeta);
+            e.getDrops().add(playerhead);
+        }
     }
 }
