@@ -21,6 +21,7 @@ import com.github.kikisito.goldenheads.enums.GHConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -28,11 +29,12 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class GoldenHead {
     @SuppressWarnings("deprecation")
-    public static ItemStack createHead(Main plugin){
+    public static ItemStack createHead(Main plugin, Optional<Player> player){
         // Set material
         ItemStack goldenhead = new ItemStack(Material.valueOf(GHConfig.GOLDENHEADS_MATERIAL.getString()));
         ItemMeta itemMeta = goldenhead.getItemMeta();
@@ -40,7 +42,11 @@ public class GoldenHead {
         itemMeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "GoldenHead");
         // Set owner
         if(goldenhead.getType() == Material.PLAYER_HEAD){
-            ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(GHConfig.GOLDENHEADS_SKULL_OWNER.getString()));
+            if(player.isPresent()){
+                ((SkullMeta) itemMeta).setOwningPlayer(player.get());
+            } else {
+                ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(GHConfig.GOLDENHEADS_SKULL_OWNER.getString()));
+            }
         }
         // Set display name
         itemMeta.setDisplayName(Utils.parseMessage(GHConfig.GOLDENHEADS_NAME.getString()));

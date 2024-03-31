@@ -48,7 +48,7 @@ public final class Main extends JavaPlugin {
     }
 
     public void registerRecipe(){
-        ItemStack goldenhead = GoldenHead.createHead(this);
+        ItemStack goldenhead = GoldenHead.createHead(this, );
         // Recipe
         recipe = new NamespacedKey(this, "golden_head");
         ShapedRecipe shapedRecipe = new ShapedRecipe(recipe, goldenhead);

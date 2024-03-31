@@ -11,11 +11,11 @@ goldenheads:
   saturation-amount: 14.4
   # In case material is a player head.
   skull-owner: "PhantomTupac"
-  display-name: "&6Golden Head"
+  display-name: "&6Cabeza dorada"
   lore:
-    - "&eAbsorption II (2:00)"
-    - "&eRegeneration III (0:02)"
-    - "&eFire Resistance (0:10)"
+    - "&eAbsorción II (2:00)"
+    - "&eRegeneración III (0:02)"
+    - "&eResistencia contra el fuego (0:10)"
   potion-effects:
     # Please, check https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html if you
     # are changing or adding potion effects. Any incorrect value can break the plugin.
