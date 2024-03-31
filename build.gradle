@@ -45,6 +45,11 @@ version = '1.0.5'
 description = 'GoldenHeads'
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
+shadowJar {
+    relocate 'com.github.Anon8281.universalScheduler', 'com.github.kikisito.goldenheads.libs.universalscheduler'
+
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
