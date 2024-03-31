@@ -30,7 +30,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
 
-import com.github.anon8281.universalscheduler.UniversalScheduler;
+import com.github.Anon8281.universalScheduler.UniversalScheduler;
 
 public class PlayerInteractListener implements Listener {
     private final Main plugin;
@@ -42,7 +42,7 @@ public class PlayerInteractListener implements Listener {
     @EventHandler
     public void onClick(PlayerInteractEvent e){
         if(GoldenHead.isGoldenHead(plugin, e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
-            UniversalScheduler.get().runTaskLater(() -> {
+            Main.getScheduler().runTaskLater(() -> {
                 e.getItem().setAmount(e.getItem().getAmount() - 1);
                 Player player = e.getPlayer();
                 player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, 100, 1);

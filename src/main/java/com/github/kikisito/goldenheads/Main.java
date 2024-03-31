@@ -17,6 +17,8 @@
 
 package com.github.kikisito.goldenheads;
 
+import com.github.Anon8281.universalScheduler.UniversalScheduler;
+import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
 import com.github.kikisito.goldenheads.enums.GHConfig;
 import com.github.kikisito.goldenheads.listeners.BlockPlaceListener;
 import com.github.kikisito.goldenheads.listeners.PlayerDeathListener;
@@ -30,9 +32,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
     private NamespacedKey recipe;
+    private static TaskScheduler scheduler;
 
     @Override
     public void onEnable() {
+        scheduler = UniversalScheduler.getScheduler(this);
         this.saveDefaultConfig();
         GHConfig.setConfig(this.getConfig());
         this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(this), this);
@@ -48,7 +52,7 @@ public final class Main extends JavaPlugin {
     }
 
     public void registerRecipe(){
-        ItemStack goldenhead = GoldenHead.createHead(this, );
+        ItemStack goldenhead = GoldenHead.createHead(this, java.util.Optional.empty());
         // Recipe
         recipe = new NamespacedKey(this, "golden_head");
         ShapedRecipe shapedRecipe = new ShapedRecipe(recipe, goldenhead);
@@ -56,5 +60,9 @@ public final class Main extends JavaPlugin {
         shapedRecipe.setIngredient('G', Material.GOLD_INGOT);
         shapedRecipe.setIngredient('P', Material.PLAYER_HEAD);
         this.getServer().addRecipe(shapedRecipe);
+    }
+
+    public static TaskScheduler getScheduler() {
+        return scheduler;
     }
 }
