@@ -1,0 +1,29 @@
+goldenheads:
+  # If you want to change the material, check https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+  # before modifying the value, otherwise it may break.
+  # It is also recommended to restart your server to register the new recipe correctly.
+  material: PLAYER_HEAD
+  # Delay (in ticks) before applying the effects of the Golden Head. Set it to 0 to apply them instantly.
+  delay: 0
+  # Amount of food the player will recover after eating the Golden Head. Each level of hunger has a value of 2. Defaults to 6.
+  food-amount: 6
+  # Amount of food the player will receive after eating the Golden Head. Defaults to 14.4
+  saturation-amount: 14.4
+  # In case material is a player head.
+  skull-owner: "PhantomTupac"
+  display-name: "&6Cabeza dorada"
+  lore:
+    - "&eAbsorción II (2:00)"
+    - "&eRegeneración III (0:02)"
+    - "&eResistencia contra el fuego (0:10)"
+  potion-effects:
+    # Please, check https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html if you
+    # are changing or adding potion effects. Any incorrect value can break the plugin.
+    # Format: EFFECT|DURATION (in seconds)|LEVEL
+    - ABSORPTION|120|2
+    - REGENERATION|2|3
+    - FIRE_RESISTANCE|10|1
+
+# Other settings related to Golden Heads
+drop-player-head-on-death: true
+drop-player-head-only-when-killed-by-a-player: true
