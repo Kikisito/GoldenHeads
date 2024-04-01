@@ -3,10 +3,8 @@
 
 [versions]
 bstats-bukkit = "1.7"
-spigot-api = "1.17-R0.1-SNAPSHOT"
-folia-api = "1.20.4-R0.1-SNAPSHOT"
+spigot-api = "1.20.4-R0.1-SNAPSHOT"
 
 [libraries]
 bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstats-bukkit" }
 spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot-api" }
-folia-api = { module = "dev.folia:folia-api", version.ref = "folia-api" }

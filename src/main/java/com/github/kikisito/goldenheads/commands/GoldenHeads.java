@@ -1,5 +1,7 @@
 package com.github.kikisito.goldenheads.commands;
 
+import com.github.kikisito.goldenheads.GoldenHead;
+import com.github.kikisito.goldenheads.config.ConfigMapper;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.github.kikisito.goldenheads.managers.SubCommandDataManager;
@@ -19,12 +21,14 @@ public class GoldenHeads extends Command implements CommandExecutor {
     private final Injector injector;
     private final LinkedHashMap<String, SubCommandDataManager> subCommandDataMap = new LinkedHashMap<>();
     private final HashMap<SubCommandDataManager, SubCommandManager> subCommandMap = new HashMap<>();
+    private static ConfigMapper configMapper;
 
     @Inject
-    protected GoldenHeads(Injector injector, JavaPlugin plugin) {
+    protected GoldenHeads(Injector injector, ConfigMapper configMapper, JavaPlugin plugin) {
         super("GoldenHeads");
 
         this.injector = injector;
+        GoldenHeads.configMapper = configMapper;
 
         setAliases(List.of("gheads", "gh", "goldenheads"));
         setDescription("Main command of GoldenHeads command.");

@@ -44,36 +44,40 @@ public class PlayerInteractListener implements Listener {
     }
 
     @EventHandler
-    public void onClick(PlayerInteractEvent e){
+    public void onClick(PlayerInteractEvent e) {
         ConfigurationContainer<Config> configContainer = configMapper.get(Config.class)
                 .orElseThrow(() -> new IllegalStateException("Config not registered in ConfigMapper"));
 
         Config config = configContainer.get();
 
-        if(GoldenHead.isGoldenHead(plugin, e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
+        if (GoldenHead.isGoldenHead(plugin, e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
             e.getItem().setAmount(e.getItem().getAmount() - 1);
             Player player = e.getPlayer();
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, 100, 1);
 
             // Add potion effects
             List<String> effects = config.goldenHeads.getPotionEffects();
-            for(String effect : effects){
+            for (String effect : effects) {
                 String[] effect_info = effect.split("\\|");
                 String effect_name = effect_info[0];
                 int effect_duration = Integer.parseInt(effect_info[1]) * 20;
                 int effect_level = Integer.parseInt(effect_info[2]) - 1;
                 player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(effect_name), effect_duration, effect_level));
             }
+
             // Adjust food level
             int playerFood = player.getFoodLevel();
             int addFood = config.goldenHeads.getFoodAmount();
             if (playerFood + addFood > 20) player.setFoodLevel(20);
             else player.setFoodLevel(playerFood + addFood);
+
             // Adjust saturation
             float playerSaturation = player.getSaturation();
             double addSaturation = config.goldenHeads.getSaturationAmount();
-            if (playerSaturation + addSaturation > player.getFoodLevel()) player.setSaturation(player.getFoodLevel());
+            if (playerSaturation + addSaturation > player.getFoodLevel())
+                player.setSaturation(player.getFoodLevel());
             else player.setSaturation((float) (playerSaturation + addSaturation));
+
             // Adjust exhaustion
             player.setExhaustion(0);
         }
