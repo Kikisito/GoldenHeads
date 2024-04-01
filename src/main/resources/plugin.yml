@@ -1,5 +1,5 @@
 name: GoldenHeads
-version: ${project.version}
+version: ${version}
 main: com.github.kikisito.goldenheads.Main
 api-version: 1.16
 folia-supported: true

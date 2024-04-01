@@ -29,25 +29,22 @@ repositories {
     maven {
         url = uri('https://repo.codemc.org/repository/maven-public')
     }
-    maven {
-        url = uri('https://jitpack.io')
-    }
 }
 
 dependencies {
-    api libs.org.bstats.bstats.bukkit
-    compileOnly libs.org.spigotmc.spigot.api
-    implementation 'com.github.Anon8281:universalScheduler:0.1.6'
+    api libs.bstats.bukkit
+    compileOnly libs.spigot.api
 }
 
 group = 'com.github.kikisito'
-version = '1.0.5'
-description = 'GoldenHeads'
+version = '1.0.6'
+description = 'An awesome plugin to add golden heads to your server!'
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 shadowJar {
-    relocate 'com.github.Anon8281.universalScheduler', 'com.github.kikisito.goldenheads.libs.universalscheduler'
-
+    archiveClassifier.set('')
+    archiveVersion.set(version)
+    relocate 'org.bstats', 'com.github.kikisito.goldenheads.libs.bstats'
 }
 
 publishing {
@@ -64,4 +61,13 @@ tasks.withType(JavaCompile) {
 
 tasks.withType(Javadoc) {
     options.encoding = 'UTF-8'
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset = 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
 }

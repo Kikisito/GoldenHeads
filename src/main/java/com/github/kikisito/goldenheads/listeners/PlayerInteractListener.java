@@ -40,32 +40,31 @@ public class PlayerInteractListener implements Listener {
     @EventHandler
     public void onClick(PlayerInteractEvent e){
         if(GoldenHead.isGoldenHead(plugin, e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
-            Main.getScheduler().runTaskLater(() -> {
-                e.getItem().setAmount(e.getItem().getAmount() - 1);
-                Player player = e.getPlayer();
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, 100, 1);
-                // Add potion effects
-                List<String> effects = GHConfig.GOLDENHEADS_POTION_EFFECTS.getList();
-                for(String effect : effects){
-                    String[] effect_info = effect.split("\\|");
-                    String effect_name = effect_info[0];
-                    int effect_duration = Integer.parseInt(effect_info[1]) * 20;
-                    int effect_level = Integer.parseInt(effect_info[2]) - 1;
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(effect_name), effect_duration, effect_level));
-                }
-                // Adjust food level
-                int playerFood = player.getFoodLevel();
-                int addFood = GHConfig.GOLDENHEADS_FOOD_AMOUNT.getInt();
-                if (playerFood + addFood > 20) player.setFoodLevel(20);
-                else player.setFoodLevel(playerFood + addFood);
-                // Adjust saturation
-                float playerSaturation = player.getSaturation();
-                float addSaturation = (float) GHConfig.GOLDENHEADS_SATURATION_AMOUNT.getDouble();
-                if (playerSaturation + addSaturation > player.getFoodLevel()) player.setSaturation(player.getFoodLevel());
-                else player.setSaturation(playerSaturation + addSaturation);
-                // Adjust exhaustion
-                player.setExhaustion(0);
-            }, GHConfig.GOLDENHEADS_DELAY.getInt());
+            e.getItem().setAmount(e.getItem().getAmount() - 1);
+            Player player = e.getPlayer();
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, 100, 1);
+
+            // Add potion effects
+            List<String> effects = GHConfig.GOLDENHEADS_POTION_EFFECTS.getList();
+            for(String effect : effects){
+                String[] effect_info = effect.split("\\|");
+                String effect_name = effect_info[0];
+                int effect_duration = Integer.parseInt(effect_info[1]) * 20;
+                int effect_level = Integer.parseInt(effect_info[2]) - 1;
+                player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(effect_name), effect_duration, effect_level));
+            }
+            // Adjust food level
+            int playerFood = player.getFoodLevel();
+            int addFood = GHConfig.GOLDENHEADS_FOOD_AMOUNT.getInt();
+            if (playerFood + addFood > 20) player.setFoodLevel(20);
+            else player.setFoodLevel(playerFood + addFood);
+            // Adjust saturation
+            float playerSaturation = player.getSaturation();
+            float addSaturation = (float) GHConfig.GOLDENHEADS_SATURATION_AMOUNT.getDouble();
+            if (playerSaturation + addSaturation > player.getFoodLevel()) player.setSaturation(player.getFoodLevel());
+            else player.setSaturation(playerSaturation + addSaturation);
+            // Adjust exhaustion
+            player.setExhaustion(0);
         }
     }
 }
