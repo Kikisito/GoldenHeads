@@ -19,7 +19,10 @@ package com.github.kikisito.goldenheads.listeners;
 
 import com.github.kikisito.goldenheads.GoldenHead;
 import com.github.kikisito.goldenheads.Main;
-import com.github.kikisito.goldenheads.enums.GHConfig;
+import com.github.kikisito.goldenheads.config.Config;
+import com.github.kikisito.goldenheads.config.ConfigMapper;
+import com.github.kikisito.goldenheads.config.ConfigurationContainer;
+import com.google.inject.Inject;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,42 +33,86 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
 
+import static com.github.kikisito.goldenheads.Main.isFolia;
+
 public class PlayerInteractListener implements Listener {
     private final Main plugin;
+    private static ConfigMapper configMapper;
 
-    public PlayerInteractListener(Main plugin){
+    @Inject
+    public PlayerInteractListener(Main plugin, ConfigMapper configMapper) {
         this.plugin = plugin;
+        this.configMapper = configMapper;
     }
 
     @EventHandler
-    public void onClick(PlayerInteractEvent e){
-        if(GoldenHead.isGoldenHead(plugin, e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
-            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                e.getItem().setAmount(e.getItem().getAmount() - 1);
-                Player player = e.getPlayer();
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, 100, 1);
+    public void onClick(PlayerInteractEvent e) {
+        ConfigurationContainer<Config> configContainer = configMapper.get(Config.class)
+                .orElseThrow(() -> new IllegalStateException("Config not registered in ConfigMapper"));
+
+        Config config = configContainer.get();
+
+        if (GoldenHead.isGoldenHead(plugin, e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
+            e.getItem().setAmount(e.getItem().getAmount() - 1);
+            Player player = e.getPlayer();
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, 100, 1);
+
+            if (!isFolia()) {
+                // Schedule a task to run synchronously after the specified delay
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                    // Add potion effects
+                    List<String> effects = config.goldenHeads.getPotionEffects();
+                    for (String effect : effects) {
+                        String[] effect_info = effect.split("\\|");
+                        String effect_name = effect_info[0];
+                        int effect_duration = Integer.parseInt(effect_info[1]) * 20;
+                        int effect_level = Integer.parseInt(effect_info[2]) - 1;
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(effect_name), effect_duration, effect_level));
+                    }
+
+                    // Adjust food level
+                    int playerFood = player.getFoodLevel();
+                    int addFood = config.goldenHeads.getFoodAmount();
+                    if (playerFood + addFood > 20) player.setFoodLevel(20);
+                    else player.setFoodLevel(playerFood + addFood);
+
+                    // Adjust saturation
+                    float playerSaturation = player.getSaturation();
+                    double addSaturation = config.goldenHeads.getSaturationAmount();
+                    if (playerSaturation + addSaturation > player.getFoodLevel())
+                        player.setSaturation(player.getFoodLevel());
+                    else player.setSaturation((float) (playerSaturation + addSaturation));
+
+                    // Adjust exhaustion
+                    player.setExhaustion(0);
+                }, config.goldenHeads.getDelay());
+            } else {
                 // Add potion effects
-                List<String> effects = GHConfig.GOLDENHEADS_POTION_EFFECTS.getList();
-                for(String effect : effects){
+                List<String> effects = config.goldenHeads.getPotionEffects();
+                for (String effect : effects) {
                     String[] effect_info = effect.split("\\|");
                     String effect_name = effect_info[0];
                     int effect_duration = Integer.parseInt(effect_info[1]) * 20;
                     int effect_level = Integer.parseInt(effect_info[2]) - 1;
                     player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(effect_name), effect_duration, effect_level));
                 }
+
                 // Adjust food level
                 int playerFood = player.getFoodLevel();
-                int addFood = GHConfig.GOLDENHEADS_FOOD_AMOUNT.getInt();
+                int addFood = config.goldenHeads.getFoodAmount();
                 if (playerFood + addFood > 20) player.setFoodLevel(20);
                 else player.setFoodLevel(playerFood + addFood);
+
                 // Adjust saturation
                 float playerSaturation = player.getSaturation();
-                float addSaturation = (float) GHConfig.GOLDENHEADS_SATURATION_AMOUNT.getDouble();
-                if (playerSaturation + addSaturation > player.getFoodLevel()) player.setSaturation(player.getFoodLevel());
-                else player.setSaturation(playerSaturation + addSaturation);
+                double addSaturation = config.goldenHeads.getSaturationAmount();
+                if (playerSaturation + addSaturation > player.getFoodLevel())
+                    player.setSaturation(player.getFoodLevel());
+                else player.setSaturation((float) (playerSaturation + addSaturation));
+
                 // Adjust exhaustion
                 player.setExhaustion(0);
-            }, GHConfig.GOLDENHEADS_DELAY.getInt());
+            }
         }
     }
 }
