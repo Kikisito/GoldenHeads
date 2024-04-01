@@ -17,10 +17,15 @@
 
 package com.github.kikisito.goldenheads;
 
-import com.github.kikisito.goldenheads.enums.GHConfig;
+import com.github.kikisito.goldenheads.config.Config;
+import com.github.kikisito.goldenheads.config.ConfigMapper;
+import com.github.kikisito.goldenheads.config.ConfigurationContainer;
 import com.github.kikisito.goldenheads.listeners.BlockPlaceListener;
 import com.github.kikisito.goldenheads.listeners.PlayerDeathListener;
 import com.github.kikisito.goldenheads.listeners.PlayerInteractListener;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -30,25 +35,41 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
     private NamespacedKey recipe;
+    private Logger logger;
+    private ConfigMapper configMapper;
 
     @Override
     public void onEnable() {
-        this.saveDefaultConfig();
-        GHConfig.setConfig(this.getConfig());
-        this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(this), this);
+        Injector injector = Guice.createInjector(new GoldenHeadsModule(this));
+        logger = injector.getInstance(Logger.class);
+        configMapper = injector.getInstance(ConfigMapper.class);
+
+        ConfigurationContainer<Config> configContainer = injector.getInstance(new Key<ConfigurationContainer<Config>>() {});
+        configMapper.register(Config.class, configContainer);
+
+        Config config = configContainer.get();
+
         this.getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
-        if(GHConfig.DROP_PLAYER_HEAD_ON_DEATH.getBoolean()) this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(this), this);
+
+        this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(this, configMapper), this);
+
+        this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(this, configMapper), this);
+
         this.registerRecipe();
+
         Metrics metrics = new Metrics(this, 8284);
     }
 
     @Override
     public void onDisable() {
-        this.getServer().removeRecipe(recipe);
+        if (recipe != null) {
+            this.getServer().removeRecipe(recipe);
+        }
     }
 
-    public void registerRecipe(){
-        ItemStack goldenhead = GoldenHead.createHead(this, java.util.Optional.empty());
+    public void registerRecipe() {
+        GoldenHead goldenHead = new GoldenHead(configMapper);
+        ItemStack goldenhead = goldenHead.createHead(this, java.util.Optional.empty());
         // Recipe
         recipe = new NamespacedKey(this, "golden_head");
         ShapedRecipe shapedRecipe = new ShapedRecipe(recipe, goldenhead);

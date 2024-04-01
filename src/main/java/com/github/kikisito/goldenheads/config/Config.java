@@ -9,66 +9,121 @@ import java.util.List;
 @ConfigSerializable
 public class Config {
     @Setting
-    private String noPermissionMessage = "<red>The specified server does not exist.</red>";
+    private Boolean debug = false;
 
     @Setting
-    private String serverNotFoundMessage = "<red>The specified server does not exist.</red>";
+    public GoldenHeads goldenHeads = new GoldenHeads();
 
-    @Setting
-    private String usageMessage = "<yellow>Usage: /switch <server></yellow>";
-
-    @Setting
-    private List<String> blockedServers;
     @Comment("""
-            
-            Set to true if wonder to enable the permission maswitch.bypass (used to bypass the blockedServer restrictions.)
+            Other settings related to Golden Heads
             """)
-    private Boolean allowBypass = false;
+    @Setting
+    private Boolean dropPlayerHeadOnDeath = true;
 
     @Setting
-    public AdminSettings admin = new AdminSettings();
+    private Boolean dropHeadOnlyWhenKilledByAPlayer = true;
 
-    public String getNoPermissionMessage() {
-        return noPermissionMessage;
+    public Boolean getDebug() {
+        return debug;
     }
 
-    public String getServerNotFoundMessage() {
-        return serverNotFoundMessage;
+    public Boolean getDropPlayerHeadOnDeath() {
+        return dropPlayerHeadOnDeath;
     }
 
-    public String getUsageMessage() {
-        return usageMessage;
-    }
-
-    public List<String> getBlockedServers() {
-        return blockedServers;
-    }
-
-    public Boolean getAllowBypass() {
-        return allowBypass;
+    public Boolean getDropHeadOnlyWhenKilledByAPlayer() {
+        return dropHeadOnlyWhenKilledByAPlayer;
     }
 
     @ConfigSerializable
-    public static class AdminSettings {
+    public static class GoldenHeads {
+        @Comment("""
+                If you want to change the material, check https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+                before modifying the value, otherwise it may break.
+                It is also recommended to restart your server to register the new recipe correctly.
+                """)
         @Setting
-        private String adminUsage = "<yellow>Usage: /rswitch <about/reload>";
+        private String material = "PLAYER_HEAD";
+
+        @Comment("""
+                Delay (in ticks) before applying the effects of the Golden Head. Set it to 0 to apply them instantly.
+                """)
+        @Setting
+        private Integer delay = 0;
+
+        @Comment("""
+                Amount of food the player will recover after eating the Golden Head. Each level of hunger has a value of 2. Defaults to 6.
+                """)
+        @Setting
+        private Integer foodAmount = 6;
+
+        @Comment("""
+                Amount of saturation the player will recover after eating the Golden Head. Defaults to 14.4.
+                """)
+        @Setting
+        private Double saturationAmount = 14.4;
+
+        @Comment("""
+                In case material is a player head.
+                """)
+        @Setting
+        private String skullOwner = "PhantomTupac";
+
+        @Comment("""
+                Here you can use legacy format or MiniMessage format, both are supported.
+                """)
+        @Setting
+        private String displayName = "&6Golden Head";
 
         @Setting
-        private String reloadMessage = "<green>Configuration reloaded successfully.</green>";
+        private List<String> lore = List.of(
+                "&eAbsorption II (2:00)",
+                "&eRegeneration III (0:02)",
+                "&eFire Resistance (0:10)"
+        );
 
+        @Comment("""
+                Please, check https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html if you
+                are changing or adding potion effects. Any incorrect value can break the plugin.
+                Format: EFFECT|DURATION (in seconds)|LEVEL
+                """)
         @Setting
-        private String aboutMessage = "<dark_aqua>RSwitch v%version% by Redactado & LutukiSolo</dark_aqua>";
+        private List<String> potionEffects = List.of(
+                "ABSORPTION|120|2",
+                "REGENERATION|2|3",
+                "FIRE_RESISTANCE|10|1"
+        );
 
-        public String getAdminUsage() {
-            return adminUsage;
+        public String getMaterial() {
+            return material;
         }
 
-        public String getReloadMessage() {
-            return reloadMessage;
+        public Integer getDelay() {
+            return delay;
         }
 
-        public String getAboutMessage() {
-            return aboutMessage;
+        public Integer getFoodAmount() {
+            return foodAmount;
+        }
+
+        public Double getSaturationAmount() {
+            return saturationAmount;
+        }
+
+        public String getSkullOwner() {
+            return skullOwner;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public List<String> getLore() {
+            return lore;
+        }
+
+        public List<String> getPotionEffects() {
+            return potionEffects;
         }
     }
 }

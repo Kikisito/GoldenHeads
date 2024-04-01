@@ -1,5 +1,6 @@
 package com.github.kikisito.goldenheads.config;
 
+import com.google.inject.Inject;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.yaml.NodeStyle;
@@ -18,11 +19,12 @@ public class ConfigurationContainer<C> {
     private final Class<C> clazz;
     private final String fileName;
 
+    @Inject
     private ConfigurationContainer(
-            final C config,
-            final Class<C> clazz,
-            final YamlConfigurationLoader loader,
-            final String fileName
+            C config,
+            Class<C> clazz,
+            YamlConfigurationLoader loader,
+            String fileName
     ) {
         this.config = new AtomicReference<>(config);
         this.loader = loader;
@@ -69,22 +71,7 @@ public class ConfigurationContainer<C> {
                 .indent(2)
                 .defaultOptions(opts -> opts
                         .shouldCopyDefaults(true)
-                        .header("""
-               \s
-             \s
-              .______          _______.____    __    ____  __  .___________.  ______  __    __ \s
-              |   _  \\        /       |\\   \\  /  \\  /   / |  | |           | /      ||  |  |  |\s
-              |  |_)  |      |   (----` \\   \\/    \\/   /  |  | `---|  |----`|  ,----'|  |__|  |\s
-              |      /        \\   \\      \\            /   |  |     |  |     |  |     |   __   |\s
-              |  |\\  \\----.----)   |      \\    /\\    /    |  |     |  |     |  `----.|  |  |  |\s
-              | _| `._____|_______/        \\__/  \\__/     |__|     |__|      \\______||__|  |__|\s
-                                                                                               \s
-              \s
-
-                Remember to join my Discord server if you need help:
-                https://discord.nookure.com/
-                \s
-               \s""")
+                        .header("Welcome to the GoldenHeads configuration file!")
                 )
                 .path(path)
                 .build();

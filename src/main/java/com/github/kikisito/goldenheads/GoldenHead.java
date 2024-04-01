@@ -17,7 +17,11 @@
 
 package com.github.kikisito.goldenheads;
 
-import com.github.kikisito.goldenheads.enums.GHConfig;
+import com.github.kikisito.goldenheads.config.Config;
+import com.github.kikisito.goldenheads.config.ConfigMapper;
+import com.github.kikisito.goldenheads.config.ConfigurationContainer;
+import com.google.inject.Inject;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -27,33 +31,43 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class GoldenHead {
-    @SuppressWarnings("deprecation")
+    private static ConfigMapper configMapper;
+
+    @Inject
+    public GoldenHead(ConfigMapper configMapper) {
+        this.configMapper = configMapper;
+    }
+
     public static ItemStack createHead(Main plugin, Optional<Player> player){
+        ConfigurationContainer<Config> configContainer = configMapper.get(Config.class)
+                .orElseThrow(() -> new IllegalStateException("Config not registered in ConfigMapper"));
+
+        Config config = configContainer.get();
+
         // Set material
-        ItemStack goldenhead = new ItemStack(Material.valueOf(GHConfig.GOLDENHEADS_MATERIAL.getString()));
+        ItemStack goldenhead = new ItemStack(Material.valueOf(config.goldenHeads.getMaterial()));
         ItemMeta itemMeta = goldenhead.getItemMeta();
         NamespacedKey key = new NamespacedKey(plugin, "golden_head");
-        itemMeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "GoldenHead");
+        Objects.requireNonNull(itemMeta).getPersistentDataContainer().set(key, PersistentDataType.STRING, "GoldenHead");
         // Set owner
         if(goldenhead.getType() == Material.PLAYER_HEAD){
             if(player.isPresent()){
                 ((SkullMeta) itemMeta).setOwningPlayer(player.get());
             } else {
-                ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(GHConfig.GOLDENHEADS_SKULL_OWNER.getString()));
+                ((SkullMeta) itemMeta).setOwningPlayer(Bukkit.getOfflinePlayer(config.goldenHeads.getSkullOwner()));
             }
         }
         // Set display name
-        itemMeta.setDisplayName(Utils.parseMessage(GHConfig.GOLDENHEADS_NAME.getString()));
+        itemMeta.setDisplayName(ColorTranslator.translate(config.goldenHeads.getDisplayName()).toString());
         // Set lore
-        List<String> finallore = new ArrayList<>();
-        for(String s : GHConfig.GOLDENHEADS_LORE.getList()) finallore.add(Utils.parseMessage(s));
-        itemMeta.setLore(finallore);
+        List<String> finalLore = new ArrayList<>();
+        for(String s : config.goldenHeads.getLore()) {
+            finalLore.add(ColorTranslator.translate(s).toString());
+        }
+        itemMeta.setLore(finalLore);
         goldenhead.setItemMeta(itemMeta);
         return goldenhead;
     }
@@ -61,6 +75,6 @@ public class GoldenHead {
     public static boolean isGoldenHead(Main plugin, ItemStack item){
         if(item == null) return false;
         NamespacedKey key = new NamespacedKey(plugin, "golden_head");
-        return item.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.STRING);
+        return Objects.requireNonNull(item.getItemMeta()).getPersistentDataContainer().has(key, PersistentDataType.STRING);
     }
 }

@@ -19,7 +19,10 @@ package com.github.kikisito.goldenheads.listeners;
 
 import com.github.kikisito.goldenheads.GoldenHead;
 import com.github.kikisito.goldenheads.Main;
-import com.github.kikisito.goldenheads.enums.GHConfig;
+import com.github.kikisito.goldenheads.config.Config;
+import com.github.kikisito.goldenheads.config.ConfigMapper;
+import com.github.kikisito.goldenheads.config.ConfigurationContainer;
+import com.google.inject.Inject;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,20 +35,28 @@ import java.util.List;
 
 public class PlayerInteractListener implements Listener {
     private final Main plugin;
+    private static ConfigMapper configMapper;
 
-    public PlayerInteractListener(Main plugin){
+    @Inject
+    public PlayerInteractListener(Main plugin, ConfigMapper configMapper) {
         this.plugin = plugin;
+        this.configMapper = configMapper;
     }
 
     @EventHandler
     public void onClick(PlayerInteractEvent e){
+        ConfigurationContainer<Config> configContainer = configMapper.get(Config.class)
+                .orElseThrow(() -> new IllegalStateException("Config not registered in ConfigMapper"));
+
+        Config config = configContainer.get();
+
         if(GoldenHead.isGoldenHead(plugin, e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
             e.getItem().setAmount(e.getItem().getAmount() - 1);
             Player player = e.getPlayer();
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, 100, 1);
 
             // Add potion effects
-            List<String> effects = GHConfig.GOLDENHEADS_POTION_EFFECTS.getList();
+            List<String> effects = config.goldenHeads.getPotionEffects();
             for(String effect : effects){
                 String[] effect_info = effect.split("\\|");
                 String effect_name = effect_info[0];
@@ -55,14 +66,14 @@ public class PlayerInteractListener implements Listener {
             }
             // Adjust food level
             int playerFood = player.getFoodLevel();
-            int addFood = GHConfig.GOLDENHEADS_FOOD_AMOUNT.getInt();
+            int addFood = config.goldenHeads.getFoodAmount();
             if (playerFood + addFood > 20) player.setFoodLevel(20);
             else player.setFoodLevel(playerFood + addFood);
             // Adjust saturation
             float playerSaturation = player.getSaturation();
-            float addSaturation = (float) GHConfig.GOLDENHEADS_SATURATION_AMOUNT.getDouble();
+            double addSaturation = config.goldenHeads.getSaturationAmount();
             if (playerSaturation + addSaturation > player.getFoodLevel()) player.setSaturation(player.getFoodLevel());
-            else player.setSaturation(playerSaturation + addSaturation);
+            else player.setSaturation((float) (playerSaturation + addSaturation));
             // Adjust exhaustion
             player.setExhaustion(0);
         }
