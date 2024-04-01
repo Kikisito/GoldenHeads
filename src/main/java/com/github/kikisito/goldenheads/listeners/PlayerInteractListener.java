@@ -33,6 +33,8 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
 
+import static com.github.kikisito.goldenheads.Main.isFolia;
+
 public class PlayerInteractListener implements Listener {
     private final Main plugin;
     private static ConfigMapper configMapper;
@@ -55,31 +57,62 @@ public class PlayerInteractListener implements Listener {
             Player player = e.getPlayer();
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, 100, 1);
 
-            // Add potion effects
-            List<String> effects = config.goldenHeads.getPotionEffects();
-            for (String effect : effects) {
-                String[] effect_info = effect.split("\\|");
-                String effect_name = effect_info[0];
-                int effect_duration = Integer.parseInt(effect_info[1]) * 20;
-                int effect_level = Integer.parseInt(effect_info[2]) - 1;
-                player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(effect_name), effect_duration, effect_level));
+            if (!isFolia()) {
+                // Schedule a task to run synchronously after the specified delay
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                    // Add potion effects
+                    List<String> effects = config.goldenHeads.getPotionEffects();
+                    for (String effect : effects) {
+                        String[] effect_info = effect.split("\\|");
+                        String effect_name = effect_info[0];
+                        int effect_duration = Integer.parseInt(effect_info[1]) * 20;
+                        int effect_level = Integer.parseInt(effect_info[2]) - 1;
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(effect_name), effect_duration, effect_level));
+                    }
+
+                    // Adjust food level
+                    int playerFood = player.getFoodLevel();
+                    int addFood = config.goldenHeads.getFoodAmount();
+                    if (playerFood + addFood > 20) player.setFoodLevel(20);
+                    else player.setFoodLevel(playerFood + addFood);
+
+                    // Adjust saturation
+                    float playerSaturation = player.getSaturation();
+                    double addSaturation = config.goldenHeads.getSaturationAmount();
+                    if (playerSaturation + addSaturation > player.getFoodLevel())
+                        player.setSaturation(player.getFoodLevel());
+                    else player.setSaturation((float) (playerSaturation + addSaturation));
+
+                    // Adjust exhaustion
+                    player.setExhaustion(0);
+                }, config.goldenHeads.getDelay());
+            } else {
+                // Add potion effects
+                List<String> effects = config.goldenHeads.getPotionEffects();
+                for (String effect : effects) {
+                    String[] effect_info = effect.split("\\|");
+                    String effect_name = effect_info[0];
+                    int effect_duration = Integer.parseInt(effect_info[1]) * 20;
+                    int effect_level = Integer.parseInt(effect_info[2]) - 1;
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(effect_name), effect_duration, effect_level));
+                }
+
+                // Adjust food level
+                int playerFood = player.getFoodLevel();
+                int addFood = config.goldenHeads.getFoodAmount();
+                if (playerFood + addFood > 20) player.setFoodLevel(20);
+                else player.setFoodLevel(playerFood + addFood);
+
+                // Adjust saturation
+                float playerSaturation = player.getSaturation();
+                double addSaturation = config.goldenHeads.getSaturationAmount();
+                if (playerSaturation + addSaturation > player.getFoodLevel())
+                    player.setSaturation(player.getFoodLevel());
+                else player.setSaturation((float) (playerSaturation + addSaturation));
+
+                // Adjust exhaustion
+                player.setExhaustion(0);
             }
-
-            // Adjust food level
-            int playerFood = player.getFoodLevel();
-            int addFood = config.goldenHeads.getFoodAmount();
-            if (playerFood + addFood > 20) player.setFoodLevel(20);
-            else player.setFoodLevel(playerFood + addFood);
-
-            // Adjust saturation
-            float playerSaturation = player.getSaturation();
-            double addSaturation = config.goldenHeads.getSaturationAmount();
-            if (playerSaturation + addSaturation > player.getFoodLevel())
-                player.setSaturation(player.getFoodLevel());
-            else player.setSaturation((float) (playerSaturation + addSaturation));
-
-            // Adjust exhaustion
-            player.setExhaustion(0);
         }
     }
 }

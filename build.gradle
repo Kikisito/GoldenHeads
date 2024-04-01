@@ -50,7 +50,7 @@ dependencies {
 group = 'com.github.kikisito'
 version = '1.0.6'
 description = 'An awesome plugin to add golden heads to your server!'
-java.sourceCompatibility = JavaVersion.VERSION_19
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 shadowJar {
     archiveClassifier.set('')

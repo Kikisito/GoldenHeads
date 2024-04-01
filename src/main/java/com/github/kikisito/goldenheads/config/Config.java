@@ -46,7 +46,7 @@ public class Config {
         private String material = "PLAYER_HEAD";
 
         @Comment("""
-                Delay (in ticks) before applying the effects of the Golden Head. Set it to 0 to apply them instantly.
+                Delay (in ticks) before applying the effects of the Golden Head. Set it to 0 to apply them instantly. (WORKS ONLY IN PAPER/SPIGOT)
                 """)
         @Setting
         private Integer delay = 0;

@@ -45,6 +45,14 @@ public final class Main extends JavaPlugin {
         goldenHeadsCommand = injector.getInstance(GoldenHeads.class);
         getCommand("goldenheads").setExecutor(goldenHeadsCommand);
 
+        if (config.getDebug()) {
+            logger.info("Debug mode enabled.");
+        }
+
+        if (isFolia()) {
+            logger.info("Folia is enabled.");
+        }
+
         Metrics metrics = new Metrics(this, 8284);
     }
 
@@ -76,5 +84,14 @@ public final class Main extends JavaPlugin {
                     logger.error("Failed to reload configuration: " + e.getMessage());
                     return null;
                 });
+    }
+
+    public static boolean isFolia() {
+        try {
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 }
