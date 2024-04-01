@@ -13,7 +13,6 @@ import com.google.inject.Key;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -44,7 +43,7 @@ public final class Main extends JavaPlugin {
         this.registerRecipe();
 
         goldenHeadsCommand = injector.getInstance(GoldenHeads.class);
-        getCommand("goldenheads").setExecutor((CommandExecutor) goldenHeadsCommand);
+        getCommand("goldenheads").setExecutor(goldenHeadsCommand);
 
         Metrics metrics = new Metrics(this, 8284);
     }
@@ -78,5 +77,4 @@ public final class Main extends JavaPlugin {
                     return null;
                 });
     }
-
 }

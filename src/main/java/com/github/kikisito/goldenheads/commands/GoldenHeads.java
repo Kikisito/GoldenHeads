@@ -32,6 +32,7 @@ public class GoldenHeads extends Command implements CommandExecutor {
 
         registerSubCommand(Reload.class);
         registerSubCommand(Get.class);
+        registerSubCommand(Give.class);
     }
 
     @Override

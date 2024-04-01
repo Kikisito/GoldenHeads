@@ -42,6 +42,9 @@ public class GoldenHeadsModule extends AbstractModule {
         YamlConfigurationLoader loader = YamlConfigurationLoader.builder()
                 .nodeStyle(NodeStyle.BLOCK)
                 .indent(2)
+                .defaultOptions(opts -> opts
+                        .shouldCopyDefaults(true)
+                )
                 .path(configPath)
                 .build();
 
