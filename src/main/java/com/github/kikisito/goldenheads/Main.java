@@ -1,22 +1,6 @@
-/*
- * Copyright (C) 2020  Kikisito (Kyllian)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package com.github.kikisito.goldenheads;
 
+import com.github.kikisito.goldenheads.commands.GoldenHeads;
 import com.github.kikisito.goldenheads.config.Config;
 import com.github.kikisito.goldenheads.config.ConfigMapper;
 import com.github.kikisito.goldenheads.config.ConfigurationContainer;
@@ -29,6 +13,7 @@ import com.google.inject.Key;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -37,6 +22,7 @@ public final class Main extends JavaPlugin {
     private NamespacedKey recipe;
     private Logger logger;
     private ConfigMapper configMapper;
+    private GoldenHeads goldenHeadsCommand;
 
     @Override
     public void onEnable() {
@@ -57,6 +43,9 @@ public final class Main extends JavaPlugin {
 
         this.registerRecipe();
 
+        goldenHeadsCommand = injector.getInstance(GoldenHeads.class);
+        getCommand("goldenheads").setExecutor((CommandExecutor) goldenHeadsCommand);
+
         Metrics metrics = new Metrics(this, 8284);
     }
 
@@ -65,12 +54,12 @@ public final class Main extends JavaPlugin {
         if (recipe != null) {
             this.getServer().removeRecipe(recipe);
         }
+        getCommand("goldenheads").setExecutor(null);
     }
 
     public void registerRecipe() {
         GoldenHead goldenHead = new GoldenHead(configMapper);
         ItemStack goldenhead = goldenHead.createHead(this, java.util.Optional.empty());
-        // Recipe
         recipe = new NamespacedKey(this, "golden_head");
         ShapedRecipe shapedRecipe = new ShapedRecipe(recipe, goldenhead);
         shapedRecipe.shape("GGG", "GPG", "GGG");
@@ -78,4 +67,16 @@ public final class Main extends JavaPlugin {
         shapedRecipe.setIngredient('P', Material.PLAYER_HEAD);
         this.getServer().addRecipe(shapedRecipe);
     }
+
+    public void reloadConfig() {
+        ConfigurationContainer<Config> configContainer = configMapper.get(Config.class)
+                .orElseThrow(() -> new IllegalStateException("Config not registered in ConfigMapper"));
+
+        configContainer.reload()
+                .exceptionally(e -> {
+                    logger.error("Failed to reload configuration: " + e.getMessage());
+                    return null;
+                });
+    }
+
 }

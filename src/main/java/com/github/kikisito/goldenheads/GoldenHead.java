@@ -1,20 +1,3 @@
-/*
- * Copyright (C) 2020  Kikisito (Kyllian)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package com.github.kikisito.goldenheads;
 
 import com.github.kikisito.goldenheads.config.Config;
@@ -22,6 +5,7 @@ import com.github.kikisito.goldenheads.config.ConfigMapper;
 import com.github.kikisito.goldenheads.config.ConfigurationContainer;
 import com.google.inject.Inject;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -32,13 +16,14 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GoldenHead {
     private static ConfigMapper configMapper;
 
     @Inject
     public GoldenHead(ConfigMapper configMapper) {
-        this.configMapper = configMapper;
+        GoldenHead.configMapper = configMapper;
     }
 
     public static ItemStack createHead(Main plugin, Optional<Player> player){
@@ -61,12 +46,12 @@ public class GoldenHead {
             }
         }
         // Set display name
-        itemMeta.setDisplayName(ColorTranslator.translate(config.goldenHeads.getDisplayName()).toString());
+        itemMeta.setDisplayName(LegacyComponentSerializer.legacySection().serialize(ColorTranslator.translate(config.goldenHeads.getDisplayName())));
+
         // Set lore
-        List<String> finalLore = new ArrayList<>();
-        for(String s : config.goldenHeads.getLore()) {
-            finalLore.add(ColorTranslator.translate(s).toString());
-        }
+        List<String> finalLore = config.goldenHeads.getLore().stream()
+                .map(line -> LegacyComponentSerializer.legacySection().serialize(ColorTranslator.translate(line)))
+                .collect(Collectors.toList());
         itemMeta.setLore(finalLore);
         goldenhead.setItemMeta(itemMeta);
         return goldenhead;

@@ -3,3 +3,8 @@ version: ${version}
 main: com.github.kikisito.goldenheads.Main
 api-version: 1.16
 folia-supported: true
+commands:
+  goldenheads:
+    description: Main command of GoldenHeads plugin.
+    aliases: [gheads, gh]
+    permission: goldenheads.admin

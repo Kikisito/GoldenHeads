@@ -4,8 +4,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import com.github.kikisito.goldenheads.config.Config;
-import com.github.kikisito.goldenheads.config.ConfigurationContainer;
 import com.github.kikisito.goldenheads.config.ConfigMapper;
+import com.github.kikisito.goldenheads.config.ConfigurationContainer;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -54,5 +55,9 @@ public class GoldenHeadsModule extends AbstractModule {
     private ConfigMapper provideConfigMapper() {
         return new ConfigMapper();
     }
-}
 
+    @Provides
+    private BukkitAudiences provideBukkitAudiences() {
+        return BukkitAudiences.create(plugin);
+    }
+}
