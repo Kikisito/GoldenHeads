@@ -10,5 +10,6 @@ GoldenHeads is a plugin supporting from 1.14 to 1.20.4 that allows you to get go
 | ✅     | Add MiniMessage support          |
 | ✅     | Add reload and get command       |
 | ✅      | Fix delay setting                |
+| ✅     | Add customizable crafting recipe |
 | ❌      | Fix config.yml comments          |
-| ❌     | Add customizable crafting recipe |
+
