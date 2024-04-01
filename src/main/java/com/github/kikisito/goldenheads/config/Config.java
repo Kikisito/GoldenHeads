@@ -5,6 +5,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import java.util.List;
+import java.util.Map;
 
 @ConfigSerializable
 public class Config {
@@ -13,6 +14,9 @@ public class Config {
 
     @Setting
     public GoldenHeads goldenHeads = new GoldenHeads();
+
+    @Setting
+    public Recipe recipe = new Recipe();
 
     @Comment("""
             Other settings related to Golden Heads
@@ -124,6 +128,41 @@ public class Config {
 
         public List<String> getPotionEffects() {
             return potionEffects;
+        }
+    }
+
+    @ConfigSerializable
+    public static class Recipe {
+        @Comment("""
+                Shape of the recipe. Use a 3x3 grid format.
+                Use spaces for empty slots and any character for filled slots.
+                The characters used will be mapped to the ingredients defined below.
+                """)
+        @Setting
+        private List<String> shape = List.of(
+                "GGG",
+                "GPG",
+                "GGG"
+        );
+
+        @Comment("""
+                Ingredients used in the recipe.
+                The keys should match the characters used in the shape.
+                The values should be valid Material names.
+                Check https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html for valid names.
+                """)
+        @Setting
+        private Map<Character, String> ingredients = Map.of(
+                'G', "GOLD_INGOT",
+                'P', "PLAYER_HEAD"
+        );
+
+        public List<String> getShape() {
+            return shape;
+        }
+
+        public Map<Character, String> getIngredients() {
+            return ingredients;
         }
     }
 }

@@ -17,6 +17,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Map;
+
 public final class Main extends JavaPlugin {
     private NamespacedKey recipe;
     private Logger logger;
@@ -69,9 +71,17 @@ public final class Main extends JavaPlugin {
         ItemStack goldenhead = goldenHead.createHead(this, java.util.Optional.empty());
         recipe = new NamespacedKey(this, "golden_head");
         ShapedRecipe shapedRecipe = new ShapedRecipe(recipe, goldenhead);
-        shapedRecipe.shape("GGG", "GPG", "GGG");
-        shapedRecipe.setIngredient('G', Material.GOLD_INGOT);
-        shapedRecipe.setIngredient('P', Material.PLAYER_HEAD);
+
+        ConfigurationContainer<Config> configContainer = configMapper.get(Config.class)
+                .orElseThrow(() -> new IllegalStateException("Config not registered in ConfigMapper"));
+        Config config = configContainer.get();
+
+        shapedRecipe.shape(config.recipe.getShape().toArray(new String[0]));
+
+        for (Map.Entry<Character, String> entry : config.recipe.getIngredients().entrySet()) {
+            shapedRecipe.setIngredient(entry.getKey(), Material.valueOf(entry.getValue()));
+        }
+
         this.getServer().addRecipe(shapedRecipe);
     }
 
