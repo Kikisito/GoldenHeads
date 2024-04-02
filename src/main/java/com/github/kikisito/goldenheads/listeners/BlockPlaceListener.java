@@ -18,21 +18,26 @@
 package com.github.kikisito.goldenheads.listeners;
 
 import com.github.kikisito.goldenheads.GoldenHead;
+import com.github.kikisito.goldenheads.Logger;
 import com.github.kikisito.goldenheads.Main;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 public class BlockPlaceListener implements Listener {
+    private Logger logger;
     private Main plugin;
 
-    public BlockPlaceListener(Main plugin){
+    public BlockPlaceListener(Main plugin, Logger logger){
         this.plugin = plugin;
+        this.logger = logger;
     }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e){
+        logger.debug("Detected block place event.");
         if(GoldenHead.isGoldenHead(plugin, e.getItemInHand())){
+            logger.debug("Block place event cancelled.");
             e.setCancelled(true);
         }
     }

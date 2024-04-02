@@ -48,7 +48,7 @@ dependencies {
 }
 
 group = 'com.github.kikisito'
-version = '2.0'
+version = '2.1'
 description = 'An awesome plugin to add golden heads to your server!'
 java.sourceCompatibility = JavaVersion.VERSION_17
 

@@ -15,9 +15,14 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Map;
+import java.util.Scanner;
 
 public final class Main extends JavaPlugin {
     private NamespacedKey recipe;
@@ -29,6 +34,7 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         Injector injector = Guice.createInjector(new GoldenHeadsModule(this));
         logger = injector.getInstance(Logger.class);
+        logger.info("Thanks for using GoldenHeads v"+getDescription().getVersion()+" by Kikisito.");
         configMapper = injector.getInstance(ConfigMapper.class);
 
         ConfigurationContainer<Config> configContainer = injector.getInstance(new Key<ConfigurationContainer<Config>>() {});
@@ -36,11 +42,11 @@ public final class Main extends JavaPlugin {
 
         Config config = configContainer.get();
 
-        this.getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new BlockPlaceListener(this, logger), this);
 
-        this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(this, configMapper), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(this, configMapper, logger), this);
 
-        this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(this, configMapper), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(this, configMapper, logger), this);
 
         this.registerRecipe();
 
@@ -48,13 +54,13 @@ public final class Main extends JavaPlugin {
         getCommand("goldenheads").setExecutor(goldenHeadsCommand);
 
         if (config.getDebug()) {
-            logger.info("Debug mode enabled.");
+            logger.info("Debug mode enabled, if you are not a developer, please disable it in the configuration file.");
         }
 
         if (isFolia()) {
-            logger.info("Folia is enabled.");
+            logger.info("Folia is enabled, delaying potion effects is not supported.");
         }
-
+        checkVersion();
         Metrics metrics = new Metrics(this, 8284);
     }
 
@@ -86,6 +92,7 @@ public final class Main extends JavaPlugin {
     }
 
     public void reloadConfig() {
+        logger.info("Reloading GoldenHeads...");
         ConfigurationContainer<Config> configContainer = configMapper.get(Config.class)
                 .orElseThrow(() -> new IllegalStateException("Config not registered in ConfigMapper"));
 
@@ -94,6 +101,26 @@ public final class Main extends JavaPlugin {
                     logger.error("Failed to reload configuration: " + e.getMessage());
                     return null;
                 });
+        logger.info("Configuration values updated.");
+        if (!isFolia()) {
+            getServer().getScheduler().runTask(this, () -> {
+                // Remove the old recipe
+                if (recipe != null) {
+                    logger.debug("Removing old recipe...");
+                    this.getServer().removeRecipe(recipe);
+                } else {
+                    logger.debug("Recipe not found, skipping removal.");
+                }
+
+                // Register the recipe again with the updated configuration
+                logger.debug("Registering recipe with updated configuration...");
+                this.registerRecipe();
+                logger.info("Recipe updated.");
+            });
+        } else {
+            logger.warn("Folia is enabled, recipe will not be reloaded.");
+        }
+        logger.info("GoldenHeads reloaded successfully.");
     }
 
     public static boolean isFolia() {
@@ -103,5 +130,56 @@ public final class Main extends JavaPlugin {
         } catch (ClassNotFoundException e) {
             return false;
         }
+    }
+
+    private void checkVersion() {
+        PluginDescriptionFile pluginDescription = getDescription();
+        String currentVersion = pluginDescription.getVersion();
+
+        String latestTag = getLatestTagFromGitHub();
+
+        if (latestTag != null) {
+            if (compareVersions(currentVersion, latestTag) < 0) {
+                logger.warn("You are <red>not</red> using the latest version, please consider updating to v" + latestTag);
+
+            } else {
+                logger.info("The plugin is up to date!");
+            }
+        } else {
+            logger.error("There was an error while contacting GitHub, could not check the latest version.");
+        }
+    }
+
+    private String getLatestTagFromGitHub() {
+        try {
+            URL url = new URL("https://api.github.com/repos/Kikisito/GoldenHeads/releases/latest");
+            InputStream inputStream = url.openStream();
+            Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
+            String response = scanner.hasNext() ? scanner.next() : "";
+            scanner.close();
+
+            String latestTag = response.split("\"tag_name\":\"")[1].split("\"")[0];
+            return latestTag;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private int compareVersions(String version1, String version2) {
+        String[] parts1 = version1.split("\\.");
+        String[] parts2 = version2.split("\\.");
+
+        int length = Math.max(parts1.length, parts2.length);
+        for (int i = 0; i < length; i++) {
+            int part1 = i < parts1.length ? Integer.parseInt(parts1[i]) : 0;
+            int part2 = i < parts2.length ? Integer.parseInt(parts2[i]) : 0;
+            if (part1 < part2) {
+                return -1;
+            } else if (part1 > part2) {
+                return 1;
+            }
+        }
+        return 0;
     }
 }
