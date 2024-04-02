@@ -60,7 +60,7 @@ public final class Main extends JavaPlugin {
         if (isFolia()) {
             logger.info("Folia is enabled, delaying potion effects is not supported.");
         }
-
+        checkVersion();
         Metrics metrics = new Metrics(this, 8284);
     }
 
@@ -140,7 +140,7 @@ public final class Main extends JavaPlugin {
 
         if (latestTag != null) {
             if (compareVersions(currentVersion, latestTag) < 0) {
-                logger.warn("Your <red>not</red> using the latest version, please consider updating to v" + latestTag);
+                logger.warn("You are <red>not</red> using the latest version, please consider updating to v" + latestTag);
 
             } else {
                 logger.info("The plugin is up to date!");
