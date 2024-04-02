@@ -1,26 +1,29 @@
 package com.github.kikisito.goldenheads;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.github.kikisito.goldenheads.config.Config;
 import com.github.kikisito.goldenheads.config.ConfigurationContainer;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Singleton
-public class  Logger {
+public class Logger {
     private final MiniMessage miniMessage;
     private final String prefix;
     private final Audience console;
-    private static ConfigurationContainer<Config> config; //
+    private final ConfigurationContainer<Config> configContainer;
+    private final Config config;
 
     @Inject
-    public Logger(JavaPlugin plugin) {
+    public Logger(JavaPlugin plugin, ConfigurationContainer<Config> configContainer) {
         this.miniMessage = MiniMessage.miniMessage();
         this.prefix = "<white>[<gold>GoldenHeads<white>] ";
         this.console = BukkitAudiences.create(plugin).console();
+        this.configContainer = configContainer;
+        this.config = configContainer.get();
     }
 
     public void info(String message) {
@@ -36,7 +39,7 @@ public class  Logger {
     }
 
     public void debug(String message) {
-        if (config.get().getDebug()) {
+        if (config.getDebug()) {
             log(LogLevel.DEBUG, message);
         }
     }

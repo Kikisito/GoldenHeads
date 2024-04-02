@@ -35,7 +35,7 @@ public class GoldenHeadsModule extends AbstractModule {
 
     @Provides
     private ConfigurationContainer<Config> provideConfigurationContainer(
-            @Named("configFileName") String fileName,
+            @Named("config.yml") String fileName,
             ConfigMapper configMapper
     ) throws IOException {
         Path configPath = plugin.getDataFolder().toPath().resolve(fileName);

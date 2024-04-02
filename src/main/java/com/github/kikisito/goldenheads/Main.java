@@ -92,6 +92,7 @@ public final class Main extends JavaPlugin {
     }
 
     public void reloadConfig() {
+        logger.info("Reloading GoldenHeads...");
         ConfigurationContainer<Config> configContainer = configMapper.get(Config.class)
                 .orElseThrow(() -> new IllegalStateException("Config not registered in ConfigMapper"));
 
@@ -100,6 +101,26 @@ public final class Main extends JavaPlugin {
                     logger.error("Failed to reload configuration: " + e.getMessage());
                     return null;
                 });
+        logger.info("Configuration values updated.");
+        if (!isFolia()) {
+            getServer().getScheduler().runTask(this, () -> {
+                // Remove the old recipe
+                if (recipe != null) {
+                    logger.debug("Removing old recipe...");
+                    this.getServer().removeRecipe(recipe);
+                } else {
+                    logger.debug("Recipe not found, skipping removal.");
+                }
+
+                // Register the recipe again with the updated configuration
+                logger.debug("Registering recipe with updated configuration...");
+                this.registerRecipe();
+                logger.info("Recipe updated.");
+            });
+        } else {
+            logger.warn("Folia is enabled, recipe will not be reloaded.");
+        }
+        logger.info("GoldenHeads reloaded successfully.");
     }
 
     public static boolean isFolia() {
