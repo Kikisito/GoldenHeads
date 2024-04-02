@@ -17,6 +17,7 @@
 
 package com.github.kikisito.goldenheads.listeners;
 
+import com.github.kikisito.goldenheads.Logger;
 import com.github.kikisito.goldenheads.Main;
 import com.github.kikisito.goldenheads.config.Config;
 import com.github.kikisito.goldenheads.config.ConfigMapper;
@@ -32,18 +33,23 @@ import org.bukkit.inventory.meta.SkullMeta;
 public class PlayerDeathListener implements Listener {
     private Main plugin;
     private static ConfigMapper configMapper;
-    public PlayerDeathListener(Main plugin, ConfigMapper configMapper) {
+    private Logger logger;
+
+    public PlayerDeathListener(Main plugin, ConfigMapper configMapper, Logger logger) {
         this.plugin = plugin;
         this.configMapper = configMapper;
+        this.logger = logger;
     }
 
     @EventHandler
-    public void onBlockPlace(PlayerDeathEvent e){
+    public void onPlayerDeath(PlayerDeathEvent e){
+        logger.debug("Detected player death event.");
         ConfigurationContainer<Config> configContainer = configMapper.get(Config.class)
                 .orElseThrow(() -> new IllegalStateException("Config not registered in ConfigMapper"));
 
         Config config = configContainer.get();
         if(!config.getDropHeadOnlyWhenKilledByAPlayer() || e.getEntity().getKiller() != null){
+            logger.debug("Dropped head.");
             ItemStack playerhead = new ItemStack(Material.PLAYER_HEAD);
             ItemMeta phmeta = playerhead.getItemMeta();
             ((SkullMeta) phmeta).setOwningPlayer(plugin.getServer().getOfflinePlayer(e.getEntity().getUniqueId()));

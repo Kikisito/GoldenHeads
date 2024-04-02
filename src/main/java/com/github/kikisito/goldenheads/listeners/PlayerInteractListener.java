@@ -18,6 +18,7 @@
 package com.github.kikisito.goldenheads.listeners;
 
 import com.github.kikisito.goldenheads.GoldenHead;
+import com.github.kikisito.goldenheads.Logger;
 import com.github.kikisito.goldenheads.Main;
 import com.github.kikisito.goldenheads.config.Config;
 import com.github.kikisito.goldenheads.config.ConfigMapper;
@@ -38,26 +39,31 @@ import static com.github.kikisito.goldenheads.Main.isFolia;
 public class PlayerInteractListener implements Listener {
     private final Main plugin;
     private static ConfigMapper configMapper;
+    private Logger logger;
 
     @Inject
-    public PlayerInteractListener(Main plugin, ConfigMapper configMapper) {
+    public PlayerInteractListener(Main plugin, ConfigMapper configMapper, Logger logger) {
         this.plugin = plugin;
         this.configMapper = configMapper;
+        this.logger = logger;
     }
 
     @EventHandler
     public void onClick(PlayerInteractEvent e) {
+        logger.debug("Detected player interact event.");
         ConfigurationContainer<Config> configContainer = configMapper.get(Config.class)
                 .orElseThrow(() -> new IllegalStateException("Config not registered in ConfigMapper"));
 
         Config config = configContainer.get();
 
         if (GoldenHead.isGoldenHead(plugin, e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
+            logger.debug("Detected right click on golden head.");
             e.getItem().setAmount(e.getItem().getAmount() - 1);
             Player player = e.getPlayer();
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, 100, 1);
 
             if (!isFolia()) {
+                logger.debug("Not Folia, scheduling task.");
                 // Schedule a task to run synchronously after the specified delay
                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                     // Add potion effects
@@ -87,6 +93,7 @@ public class PlayerInteractListener implements Listener {
                     player.setExhaustion(0);
                 }, config.goldenHeads.getDelay());
             } else {
+                logger.debug("Folia, applying effects.");
                 // Add potion effects
                 List<String> effects = config.goldenHeads.getPotionEffects();
                 for (String effect : effects) {
@@ -97,6 +104,7 @@ public class PlayerInteractListener implements Listener {
                     player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(effect_name), effect_duration, effect_level));
                 }
 
+                logger.debug("Applying food, saturation, and exhaustion adjustments.");
                 // Adjust food level
                 int playerFood = player.getFoodLevel();
                 int addFood = config.goldenHeads.getFoodAmount();
