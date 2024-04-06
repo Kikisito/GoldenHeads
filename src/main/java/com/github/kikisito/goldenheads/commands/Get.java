@@ -37,17 +37,36 @@ public class Get extends SubCommandManager {
     }
 
     @Override
-    public void execute(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] strings) {
-        if (!(sender instanceof Player)) {
+    public void execute(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args) {
+
+
+        if (!(sender instanceof Player player)) {
             Audience audience = audiences.sender(sender);
-            audience.sendMessage(ColorTranslator.translate("&cThis command can only be executed by a player."));
+            audience.sendMessage(translate("&cThis command can only be executed by a player."));
             return;
         }
 
-        Player player = (Player) sender;
-        Audience audience = audiences.player(player);
+        Audience audience = audiences.sender(sender);
         ItemStack goldenHead = GoldenHead.createHead((Main) plugin, Optional.empty());
+        int amount = 1;
 
+        if (args.length > 0) {
+            try {
+                amount = Integer.parseInt(args[0]);
+            } catch (NumberFormatException e) {
+                audience.sendMessage(translate("&cInvalid amount. Please enter a valid number."));
+                return;
+            }
+        }
+
+        giveGoldenHead(player, amount);
+    }
+
+    private void giveGoldenHead(Player player, int amount) {
+        Audience audience = audiences.player(player);
+        Main main = (Main) plugin;
+        ItemStack goldenHead = GoldenHead.createHead(main, Optional.empty());
+        goldenHead.setAmount(amount);
         if (player.getInventory().firstEmpty() == -1) {
             player.getWorld().dropItem(player.getLocation(), goldenHead);
             audience.sendMessage(ColorTranslator.translate("&eYour inventory is full. The Golden Head has been dropped on the ground."));
