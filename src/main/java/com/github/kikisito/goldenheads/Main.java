@@ -11,6 +11,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -60,6 +61,11 @@ public final class Main extends JavaPlugin {
         if (isFolia()) {
             logger.info("Folia is enabled, delaying potion effects is not supported.");
         }
+
+        if (Bukkit.getPluginManager().getPlugin("Geyser-Spigot") != null) {
+            logger.warn("It seems like you are using Geyser, please note that you will need to set add-non-bedrock-items to true in the Geyser config to make GoldenHeads look like they should. (If you are using heads, please add them to the file custom-skulls.yml in the Geyser plugin folder)");
+        }
+
         checkVersion();
         Metrics metrics = new Metrics(this, 8284);
     }
