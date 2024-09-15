@@ -1,7 +1,9 @@
 package com.github.kikisito.goldenheads.commands;
 
 import com.github.kikisito.goldenheads.Main;
+import com.github.kikisito.goldenheads.config.Config;
 import com.github.kikisito.goldenheads.config.ConfigMapper;
+import com.github.kikisito.goldenheads.config.ConfigurationContainer;
 import com.github.kikisito.goldenheads.managers.SubCommandDataManager;
 import com.github.kikisito.goldenheads.managers.SubCommandManager;
 import com.google.inject.Inject;
@@ -21,13 +23,13 @@ import static com.github.kikisito.goldenheads.ColorTranslator.translate;
 )
 public class Reload extends SubCommandManager {
     private final JavaPlugin plugin;
-    private final ConfigMapper configMapper;
+    private final ConfigurationContainer<Config> configContainer;
     private final BukkitAudiences audiences;
 
     @Inject
-    public Reload(JavaPlugin plugin, ConfigMapper configMapper, BukkitAudiences audiences) {
+    public Reload(JavaPlugin plugin, ConfigurationContainer<Config> configContainer, BukkitAudiences audiences) {
         this.plugin = plugin;
-        this.configMapper = configMapper;
+        this.configContainer = configContainer;
         this.audiences = audiences;
     }
 
@@ -38,7 +40,7 @@ public class Reload extends SubCommandManager {
         Main main = (Main) plugin;
         main.reloadConfig();
 
-        Component message = translate("&aConfiguration reloaded successfully!");
+        Component message = translate(configContainer.get().messages.getReloadConfig());
         audience.sendMessage(message);
     }
 }
