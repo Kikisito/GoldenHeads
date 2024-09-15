@@ -1,7 +1,9 @@
 package com.github.kikisito.goldenheads.commands;
 
 import com.github.kikisito.goldenheads.ColorTranslator;
+import com.github.kikisito.goldenheads.config.Config;
 import com.github.kikisito.goldenheads.config.ConfigMapper;
+import com.github.kikisito.goldenheads.config.ConfigurationContainer;
 import com.google.inject.Inject;
 import com.github.kikisito.goldenheads.GoldenHead;
 import com.github.kikisito.goldenheads.Main;
@@ -26,23 +28,21 @@ import static com.github.kikisito.goldenheads.ColorTranslator.translate;
 )
 public class Get extends SubCommandManager {
     private final JavaPlugin plugin;
-    private final ConfigMapper configMapper;
+    private final ConfigurationContainer<Config> configContainer;
     private final BukkitAudiences audiences;
 
     @Inject
-    public Get(JavaPlugin plugin, ConfigMapper configMapper, BukkitAudiences audiences) {
+    public Get(JavaPlugin plugin, ConfigurationContainer<Config> configContainer, BukkitAudiences audiences) {
         this.plugin = plugin;
-        this.configMapper = configMapper;
+        this.configContainer = configContainer;
         this.audiences = audiences;
     }
 
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args) {
-
-
         if (!(sender instanceof Player player)) {
             Audience audience = audiences.sender(sender);
-            audience.sendMessage(translate("&cThis command can only be executed by a player."));
+            audience.sendMessage(translate(configContainer.get().messages.getOnlyPlayer()));
             return;
         }
 
@@ -54,7 +54,7 @@ public class Get extends SubCommandManager {
             try {
                 amount = Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
-                audience.sendMessage(translate("&cInvalid amount. Please enter a valid number."));
+                audience.sendMessage(translate(configContainer.get().messages.getInvalidAmount()));
                 return;
             }
         }
@@ -69,10 +69,10 @@ public class Get extends SubCommandManager {
         goldenHead.setAmount(amount);
         if (player.getInventory().firstEmpty() == -1) {
             player.getWorld().dropItem(player.getLocation(), goldenHead);
-            audience.sendMessage(ColorTranslator.translate("&eYour inventory is full. The Golden Head has been dropped on the ground."));
+            audience.sendMessage(ColorTranslator.translate(configContainer.get().messages.getInventoryFull()));
         } else {
             player.getInventory().addItem(goldenHead);
-            audience.sendMessage(ColorTranslator.translate("&aYou have received a Golden Head!"));
+            audience.sendMessage(ColorTranslator.translate(configContainer.get().messages.getGotGoldenHead()));
         }
     }
 }
