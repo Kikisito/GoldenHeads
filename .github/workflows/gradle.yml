@@ -13,11 +13,19 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x gradlew
       
-    - name: Restore Gradle Wrapper
+    - name: Check if gradle-wrapper.jar is ignored
       run: |
-        gradle wrapper
-        git add gradle/wrapper/gradle-wrapper.jar
-        git commit -m "Restore Gradle Wrapper"
+        if git check-ignore -q gradle/wrapper/gradle-wrapper.jar; then
+          echo "gradle-wrapper.jar is being ignored by .gitignore"
+          echo "Forcing addition of gradle-wrapper.jar"
+          git add -f gradle/wrapper/gradle-wrapper.jar
+          git commit -m "Force add gradle-wrapper.jar"
+        else
+          echo "gradle-wrapper.jar is not being ignored"
+        fi
+        
+    - name: Restore Gradle Wrapper
+      run: gradle wrapper
         
     - name: Setup Java
       uses: actions/setup-java@v4
