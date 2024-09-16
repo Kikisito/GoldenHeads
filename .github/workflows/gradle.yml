@@ -1,0 +1,30 @@
+name: Java CI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: ['15', '17', '21'] 
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.m2/repository
+          key: ${{ runner.os }}-gradle-test-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-test-
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Build with Gradle
+        run: ./gradlew check shadowJar
+      - name: Upload Shadow JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: shadow-jar
+          path: build/libs/*.jar
