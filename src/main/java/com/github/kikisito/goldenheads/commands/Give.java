@@ -3,6 +3,9 @@ package com.github.kikisito.goldenheads.commands;
 import com.github.kikisito.goldenheads.ColorTranslator;
 import com.github.kikisito.goldenheads.GoldenHead;
 import com.github.kikisito.goldenheads.Main;
+import com.github.kikisito.goldenheads.config.Config;
+import com.github.kikisito.goldenheads.config.ConfigMapper;
+import com.github.kikisito.goldenheads.config.ConfigurationContainer;
 import com.github.kikisito.goldenheads.managers.SubCommandDataManager;
 import com.github.kikisito.goldenheads.managers.SubCommandManager;
 import com.google.inject.Inject;
@@ -29,11 +32,13 @@ import static com.github.kikisito.goldenheads.ColorTranslator.translate;
 public class Give extends SubCommandManager {
     private final JavaPlugin plugin;
     private final BukkitAudiences audiences;
+    private final ConfigurationContainer<Config> configContainer;
 
     @Inject
-    public Give(JavaPlugin plugin, BukkitAudiences audiences) {
+    public Give(JavaPlugin plugin, BukkitAudiences audiences, ConfigurationContainer<Config> configContainer) {
         this.plugin = plugin;
         this.audiences = audiences;
+        this.configContainer = configContainer;
     }
 
     @Override
@@ -41,7 +46,7 @@ public class Give extends SubCommandManager {
         Audience audience = audiences.sender(sender);
 
         if (args.length < 1 || args.length > 2) {
-            audience.sendMessage(translate("&cUsage: /gheads give <*/player> [amount]"));
+            audience.sendMessage(translate(configContainer.get().messages.getGiveUsage()));
             return;
         }
 
@@ -52,7 +57,7 @@ public class Give extends SubCommandManager {
             try {
                 amount = Integer.parseInt(args[1]);
             } catch (NumberFormatException e) {
-                audience.sendMessage(translate("&cInvalid amount. Please enter a valid number."));
+                audience.sendMessage(translate(configContainer.get().messages.getInvalidAmount()));
                 return;
             }
         }
@@ -61,15 +66,15 @@ public class Give extends SubCommandManager {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 giveGoldenHead(player, amount);
             }
-            audience.sendMessage(translate("&aGave " + amount + " golden head(s) to all online players."));
+            audience.sendMessage(translate(configContainer.get().messages.getGaveToAll().replace("%d", String.valueOf(amount))));
         } else {
             Player player = Bukkit.getPlayer(playerName);
             if (player == null) {
-                audience.sendMessage(translate("&cPlayer not found: " + playerName));
+                audience.sendMessage(translate(configContainer.get().messages.getPlayerNotFound().replace("%s", playerName)));
                 return;
             }
             giveGoldenHead(player, amount);
-            audience.sendMessage(translate("&aGave " + amount + " golden head(s) to " + player.getName() + "."));
+            audience.sendMessage(translate(configContainer.get().messages.getGaveToPlayer().replace("%s", playerName).replace("%d", String.valueOf(amount))));
         }
     }
 
@@ -80,10 +85,10 @@ public class Give extends SubCommandManager {
         goldenHead.setAmount(amount);
         if (player.getInventory().firstEmpty() == -1) {
             player.getWorld().dropItem(player.getLocation(), goldenHead);
-            audience.sendMessage(ColorTranslator.translate("&eYour inventory is full. The Golden Head has been dropped on the ground."));
+            audience.sendMessage(ColorTranslator.translate(configContainer.get().messages.getInventoryFull()));
         } else {
             player.getInventory().addItem(goldenHead);
-            audience.sendMessage(ColorTranslator.translate("&aYou have received a Golden Head!"));
+            audience.sendMessage(ColorTranslator.translate(configContainer.get().messages.getGotGoldenHead()));
         }
     }
 }

@@ -18,6 +18,9 @@ public class Config {
     @Setting
     public Recipe recipe = new Recipe();
 
+    @Setting
+    public Messages messages = new Messages();
+
     @Comment("""
             Other settings related to Golden Heads
             """)
@@ -50,6 +53,18 @@ public class Config {
         private String material = "PLAYER_HEAD";
 
         @Comment("""
+                CustomModelData value for the Golden Head. Defaults to 1.
+                """)
+        @Setting
+        private Integer customModelData = 1;
+
+        @Comment("""
+                Click type to apply the effects of the Golden Head. Defaults to RIGHT_CLICK. (RIGHT_CLICK, LEFT_CLICK, ANY)
+                """)
+        @Setting
+        private String clickType = "RIGHT_CLICK";
+
+        @Comment("""
                 Delay (in ticks) before applying the effects of the Golden Head. Set it to 0 to apply them instantly. (WORKS ONLY IN PAPER/SPIGOT)
                 """)
         @Setting
@@ -71,7 +86,7 @@ public class Config {
                 In case material is a player head.
                 """)
         @Setting
-        private String skullOwner = "PhantomTupac";
+        private String skullTexture = "e3RleHR1cmVzOntTS0lOOnt1cmw6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2ZkMjdkOGIyMThiNWFhOTcyZmRhOTA1NDkyNmQ3YjFiMmMwMzI5YTQ1NjMzMjE0OGZjYzNkNmM2ZDM0Y2YwZiJ9fX0="; // PhantomTupac Skull Base64
 
         @Comment("""
                 Here you can use legacy format or MiniMessage format, both are supported.
@@ -102,6 +117,14 @@ public class Config {
             return material;
         }
 
+        public Integer getCustomModelData() {
+            return customModelData;
+        }
+
+        public String getClickType() {
+            return clickType;
+        }
+
         public Integer getDelay() {
             return delay;
         }
@@ -114,8 +137,8 @@ public class Config {
             return saturationAmount;
         }
 
-        public String getSkullOwner() {
-            return skullOwner;
+        public String getSkullTexture() {
+            return skullTexture;
         }
 
         public String getDisplayName() {
@@ -163,6 +186,100 @@ public class Config {
 
         public Map<Character, String> getIngredients() {
             return ingredients;
+        }
+    }
+
+    @ConfigSerializable
+    public static class Messages {
+        @Setting
+        private String noPermission = "&cYou do not have permission to execute this command.";
+
+        @Setting
+        private String playerNotFound = "&cPlayer not found: %s";
+
+        @Setting
+        private String invalidAmount = "&cInvalid amount. Please enter a valid number.";
+
+        @Setting
+        private String inventoryFull = "&eYour inventory is full. The Golden Head has been dropped on the ground.";
+
+        @Setting
+        private String gaveToAll = "&aGave %d golden head(s) to all online players.";
+
+        @Setting
+        private String gaveToPlayer = "&aGave %d golden head(s) to %s.";
+
+        @Setting
+        private String giveUsage = "&cUsage: /gheads give <*/player> [amount]";
+
+        @Setting
+        private String noArgs = "&6GoldenHeads &7v%s\n&7Author: &6Kikisito\n&7Commands:\n&6/gheads reload &7- Reload the configuration file.\n&6/gheads get &7- Get a golden head.\n&6/gheads give &7- Give a golden head to a player.";
+
+        @Setting
+        private String invalidPlayer = "&cInvalid player. Please enter a valid player.";
+
+        @Setting
+        private String onlyPlayer = "&cThis command can only be executed by a player.";
+
+        @Setting
+        private String gotGoldenHead = "&aYou have received a Golden Head!";
+
+        @Setting
+        private String reloadConfig = "&aGoldenHeads configuration reloaded successfully.";
+
+        @Setting
+        private String isOutdated = "&4&l[OUTDATED]";
+
+        public String getNoPermission() {
+            return noPermission;
+        }
+
+        public String getPlayerNotFound() {
+            return playerNotFound;
+        }
+
+        public String getInvalidAmount() {
+            return invalidAmount;
+        }
+
+        public String getInventoryFull() {
+            return inventoryFull;
+        }
+
+        public String getGaveToAll() {
+            return gaveToAll;
+        }
+
+        public String getGaveToPlayer() {
+            return gaveToPlayer;
+        }
+
+        public String getGiveUsage() {
+            return giveUsage;
+        }
+
+        public String getNoArgs() {
+            return noArgs;
+        }
+
+        public String getInvalidPlayer() {
+            return invalidPlayer;
+        }
+
+        public String getOnlyPlayer() {
+            return onlyPlayer;
+        }
+
+        public String getGotGoldenHead() {
+            return gotGoldenHead;
+        }
+
+        public String getReloadConfig() {
+            return reloadConfig;
+        }
+
+        public String getIsOutdated() {
+            return isOutdated;
         }
     }
 }

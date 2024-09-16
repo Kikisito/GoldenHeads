@@ -1,11 +1,17 @@
 package com.github.kikisito.goldenheads.commands;
 
 import com.github.kikisito.goldenheads.GoldenHead;
+import com.github.kikisito.goldenheads.Main;
+import com.github.kikisito.goldenheads.VersionController;
+import com.github.kikisito.goldenheads.config.Config;
 import com.github.kikisito.goldenheads.config.ConfigMapper;
+import com.github.kikisito.goldenheads.config.ConfigurationContainer;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.github.kikisito.goldenheads.managers.SubCommandDataManager;
 import com.github.kikisito.goldenheads.managers.SubCommandManager;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,18 +23,24 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static com.github.kikisito.goldenheads.ColorTranslator.translate;
+
 public class GoldenHeads extends Command implements CommandExecutor {
     private final Injector injector;
     private final LinkedHashMap<String, SubCommandDataManager> subCommandDataMap = new LinkedHashMap<>();
     private final HashMap<SubCommandDataManager, SubCommandManager> subCommandMap = new HashMap<>();
-    private static ConfigMapper configMapper;
+    private static ConfigurationContainer<Config> configContainer;
+    private final BukkitAudiences audiences;
+    private final VersionController versionController;
 
     @Inject
-    protected GoldenHeads(Injector injector, ConfigMapper configMapper, JavaPlugin plugin) {
+    protected GoldenHeads(Injector injector, ConfigurationContainer<Config> configContainer, BukkitAudiences audiences, VersionController versionController) {
         super("GoldenHeads");
 
         this.injector = injector;
-        GoldenHeads.configMapper = configMapper;
+        this.audiences = audiences;
+        this.configContainer = configContainer;
+        this.versionController = versionController;
 
         setAliases(List.of("gheads", "gh", "goldenheads"));
         setDescription("Main command of GoldenHeads command.");
@@ -42,6 +54,21 @@ public class GoldenHeads extends Command implements CommandExecutor {
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
+            Audience audience = audiences.sender(sender);
+
+            if (!sender.hasPermission("goldenheads.admin")) {
+                audience.sendMessage(translate(configContainer.get().messages.getNoPermission()));
+
+                return true;
+            }
+
+            String version = versionController.getVersion();
+            if (versionController.isOutdated()) {
+                version = version + " " + configContainer.get().messages.getIsOutdated();
+            }
+
+            audience.sendMessage(translate(configContainer.get().messages.getNoArgs().replace("%s", version)));
+
             return true;
         }
 

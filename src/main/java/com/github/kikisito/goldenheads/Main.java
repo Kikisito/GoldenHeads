@@ -7,9 +7,11 @@ import com.github.kikisito.goldenheads.config.ConfigurationContainer;
 import com.github.kikisito.goldenheads.listeners.BlockPlaceListener;
 import com.github.kikisito.goldenheads.listeners.PlayerDeathListener;
 import com.github.kikisito.goldenheads.listeners.PlayerInteractListener;
+import com.github.kikisito.goldenheads.listeners.PrepareCraftListener;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -23,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 
 public final class Main extends JavaPlugin {
@@ -30,24 +33,28 @@ public final class Main extends JavaPlugin {
     private Logger logger;
     private ConfigMapper configMapper;
     private GoldenHeads goldenHeadsCommand;
+    private VersionController versionController;
 
     @Override
     public void onEnable() {
         Injector injector = Guice.createInjector(new GoldenHeadsModule(this));
         logger = injector.getInstance(Logger.class);
-        logger.info("Thanks for using GoldenHeads v"+getDescription().getVersion()+" by Kikisito.");
+        logger.info("Thanks for using GoldenHeads v" + getDescription().getVersion() + " by Kikisito.");
         configMapper = injector.getInstance(ConfigMapper.class);
 
+        versionController = injector.getInstance(VersionController.class);
+
+
+        // Register the configuration
         ConfigurationContainer<Config> configContainer = injector.getInstance(new Key<ConfigurationContainer<Config>>() {});
         configMapper.register(Config.class, configContainer);
 
         Config config = configContainer.get();
 
         this.getServer().getPluginManager().registerEvents(new BlockPlaceListener(this, logger), this);
-
         this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(this, configMapper, logger), this);
-
         this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(this, configMapper, logger), this);
+        this.getServer().getPluginManager().registerEvents(new PrepareCraftListener(this, configMapper, logger), this);
 
         this.registerRecipe();
 
@@ -142,10 +149,10 @@ public final class Main extends JavaPlugin {
         PluginDescriptionFile pluginDescription = getDescription();
         String currentVersion = pluginDescription.getVersion();
 
-        String latestTag = getLatestTagFromGitHub();
+        String latestTag = versionController.getLatestTagFromGitHub();
 
         if (latestTag != null) {
-            if (compareVersions(currentVersion, latestTag) < 0) {
+            if (versionController.compareVersions(currentVersion, latestTag) < 0) {
                 logger.warn("You are <red>not</red> using the latest version, please consider updating to v" + latestTag);
 
             } else {
@@ -156,36 +163,8 @@ public final class Main extends JavaPlugin {
         }
     }
 
-    private String getLatestTagFromGitHub() {
-        try {
-            URL url = new URL("https://api.github.com/repos/Kikisito/GoldenHeads/releases/latest");
-            InputStream inputStream = url.openStream();
-            Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
-            String response = scanner.hasNext() ? scanner.next() : "";
-            scanner.close();
-
-            String latestTag = response.split("\"tag_name\":\"")[1].split("\"")[0];
-            return latestTag;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private int compareVersions(String version1, String version2) {
-        String[] parts1 = version1.split("\\.");
-        String[] parts2 = version2.split("\\.");
-
-        int length = Math.max(parts1.length, parts2.length);
-        for (int i = 0; i < length; i++) {
-            int part1 = i < parts1.length ? Integer.parseInt(parts1[i]) : 0;
-            int part2 = i < parts2.length ? Integer.parseInt(parts2[i]) : 0;
-            if (part1 < part2) {
-                return -1;
-            } else if (part1 > part2) {
-                return 1;
-            }
-        }
-        return 0;
+    public boolean isOutdated() {
+        // Use CompareVersions method to check if the plugin is outdated, among with the latest version from GitHub
+        return versionController.compareVersions(getDescription().getVersion(), Objects.requireNonNull(versionController.getLatestTagFromGitHub())) < 0;
     }
 }

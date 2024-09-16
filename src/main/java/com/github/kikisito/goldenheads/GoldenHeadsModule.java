@@ -16,9 +16,11 @@ import java.nio.file.Path;
 
 public class GoldenHeadsModule extends AbstractModule {
     private final JavaPlugin plugin;
+    private final String version;
 
     public GoldenHeadsModule(JavaPlugin plugin) {
         this.plugin = plugin;
+        this.version = plugin.getDescription().getVersion();
     }
 
     @Override
@@ -26,6 +28,8 @@ public class GoldenHeadsModule extends AbstractModule {
         bind(JavaPlugin.class).toInstance(plugin);
         bind(Logger.class).asEagerSingleton();
         bind(String.class).annotatedWith(Named.class).toInstance("config.yml");
+
+        bind(VersionController.class).asEagerSingleton();
     }
 
     @Provides

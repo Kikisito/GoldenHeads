@@ -56,8 +56,12 @@ public class PlayerInteractListener implements Listener {
 
         Config config = configContainer.get();
 
-        if (GoldenHead.isGoldenHead(plugin, e.getItem()) && e.getAction().toString().startsWith("RIGHT_CLICK")) {
-            logger.debug("Detected right click on golden head.");
+        boolean isValidClickType = config.goldenHeads.getClickType().equalsIgnoreCase("ANY") || e.getAction().toString().toLowerCase().startsWith(config.goldenHeads.getClickType().toLowerCase());
+
+        logger.debug("isValidClickType: " + isValidClickType + ", clickType: " + e.getAction().toString() + ", configClickType: " + config.goldenHeads.getClickType());
+
+        if (GoldenHead.isGoldenHead(plugin, e.getItem()) && isValidClickType) {
+            logger.debug("Detected click on golden head.");
             e.getItem().setAmount(e.getItem().getAmount() - 1);
             Player player = e.getPlayer();
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, 100, 1);
