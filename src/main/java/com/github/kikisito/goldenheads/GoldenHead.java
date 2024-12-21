@@ -97,7 +97,9 @@ public class GoldenHead {
             throw new IllegalArgumentException("Meta and texture url must not be null or empty");
         }
 
-        PlayerProfile profile = Bukkit.createPlayerProfile(UUID.fromString("b013e633-10cb-46bc-8f92-b30e1200563b"));
+        // PlayerProfile uuid is based on the texture url.
+        // If the texture changes, items won't be stackable anyway so this should not be a problem
+        PlayerProfile profile = Bukkit.createPlayerProfile(UUID.nameUUIDFromBytes(texturesUrl.getBytes()));
         PlayerTextures textures = profile.getTextures();
 
         try {
@@ -108,7 +110,6 @@ public class GoldenHead {
 
         profile.setTextures(textures);
         meta.setOwnerProfile(profile);
-
         return meta;
     }
 
