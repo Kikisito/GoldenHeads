@@ -86,7 +86,7 @@ public class Config {
                 In case material is a player head.
                 """)
         @Setting
-        private String skullTexture = "e3RleHR1cmVzOntTS0lOOnt1cmw6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2ZkMjdkOGIyMThiNWFhOTcyZmRhOTA1NDkyNmQ3YjFiMmMwMzI5YTQ1NjMzMjE0OGZjYzNkNmM2ZDM0Y2YwZiJ9fX0="; // PhantomTupac Skull Base64
+        private String skullTexture = "https://textures.minecraft.net/texture/cfd27d8b218b5aa972fda9054926d7b1b2c0329a456332148fcc3d6c6d34cf0f"; // PhantomTupac Skin in Minecraft Servers
 
         @Comment("""
                 Here you can use legacy format or MiniMessage format, both are supported.

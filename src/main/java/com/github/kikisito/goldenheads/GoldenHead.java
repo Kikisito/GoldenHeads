@@ -15,10 +15,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
+import org.bukkit.profile.PlayerProfile;
+import org.bukkit.profile.PlayerTextures;
 
-import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -66,7 +67,7 @@ public class GoldenHead {
                         plugin.getLogger().severe("Invalid UUID format: " + skullTexture);
                     }
                 } else if (skullTexture.length() > 22) {
-                    itemMeta = base64SkullBuilder((SkullMeta) itemMeta, skullTexture);
+                    itemMeta = skullBuilder((SkullMeta) itemMeta, skullTexture);
                 } else {
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(skullTexture);
                     if (offlinePlayer.getName() != null) {
@@ -91,21 +92,22 @@ public class GoldenHead {
         return goldenhead;
     }
 
-    public static SkullMeta base64SkullBuilder(SkullMeta meta, String base64) {
-        if (meta == null || base64 == null || base64.isEmpty()) {
-            throw new IllegalArgumentException("Meta and base64 must not be null or empty");
+    public static SkullMeta skullBuilder(SkullMeta meta, String texturesUrl) {
+        if (meta == null || texturesUrl == null || texturesUrl.isEmpty()) {
+            throw new IllegalArgumentException("Meta and texture url must not be null or empty");
         }
 
-        GameProfile profile = new GameProfile(UUID.randomUUID(), "CustomHead");
-        profile.getProperties().put("textures", new Property("textures", base64));
+        PlayerProfile profile = Bukkit.createPlayerProfile(UUID.fromString("b013e633-10cb-46bc-8f92-b30e1200563b"));
+        PlayerTextures textures = profile.getTextures();
 
         try {
-            Field profileField = meta.getClass().getDeclaredField("profile");
-            profileField.setAccessible(true);
-            profileField.set(meta, profile);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+            textures.setSkin(new URL(texturesUrl));
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid texture url: " + texturesUrl);
         }
+
+        profile.setTextures(textures);
+        meta.setOwnerProfile(profile);
 
         return meta;
     }
