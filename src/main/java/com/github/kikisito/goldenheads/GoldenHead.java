@@ -51,10 +51,12 @@ public class GoldenHead {
         // Set owner
         if (goldenhead.getType() == Material.PLAYER_HEAD) {
             if (player.isPresent()) {
+                // Never called
                 ((SkullMeta) itemMeta).setOwningPlayer(player.get());
             } else {
                 String skullTexture = config.goldenHeads.getSkullTexture();
                 if (skullTexture.length() == 36) {
+                    // skullTexture is an UUID
                     try {
                         UUID uuid = UUID.fromString(skullTexture);
                         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
@@ -67,8 +69,10 @@ public class GoldenHead {
                         plugin.getLogger().severe("Invalid UUID format: " + skullTexture);
                     }
                 } else if (skullTexture.length() > 22) {
+                    // skullTexture is an URL
                     itemMeta = skullBuilder((SkullMeta) itemMeta, skullTexture);
                 } else {
+                    // skullTexture is a player name (should not be used)
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(skullTexture);
                     if (offlinePlayer.getName() != null) {
                         ((SkullMeta) itemMeta).setOwningPlayer(offlinePlayer);
