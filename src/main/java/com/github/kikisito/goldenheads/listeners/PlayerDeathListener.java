@@ -48,7 +48,7 @@ public class PlayerDeathListener implements Listener {
                 .orElseThrow(() -> new IllegalStateException("Config not registered in ConfigMapper"));
 
         Config config = configContainer.get();
-        if(!config.getDropHeadOnlyWhenKilledByAPlayer() || e.getEntity().getKiller() != null){
+        if(config.getDropPlayerHeadOnDeath() && (!config.getDropHeadOnlyWhenKilledByAPlayer() || e.getEntity().getKiller() != null)){
             logger.debug("Dropped head.");
             ItemStack playerhead = new ItemStack(Material.PLAYER_HEAD);
             ItemMeta phmeta = playerhead.getItemMeta();
