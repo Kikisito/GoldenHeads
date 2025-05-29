@@ -118,8 +118,8 @@ public class GoldenHead {
     }
 
     public static boolean isGoldenHead(Main plugin, ItemStack item) {
-        if (item == null) return false;
+        if (item == null || item.getItemMeta() == null) return false;
         NamespacedKey key = new NamespacedKey(plugin, "golden_head");
-        return Objects.requireNonNull(item.getItemMeta()).getPersistentDataContainer().has(key, PersistentDataType.STRING);
+        return item.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.STRING);
     }
 }
