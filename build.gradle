@@ -60,6 +60,10 @@ shadowJar {
     relocate 'org.bstats', 'com.github.kikisito.goldenheads.libs.bstats'
 }
 
+tasks.withType(Jar).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
