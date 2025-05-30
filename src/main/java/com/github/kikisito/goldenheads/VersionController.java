@@ -12,19 +12,14 @@ import java.util.Scanner;
 
 public class VersionController {
     public static boolean IS_OUTDATED;
-
     private String version;
     private Logger logger;
 
     @Inject
     public VersionController(JavaPlugin plugin, Logger logger) {
-        this.version = plugin.getDescription().getVersion();
-        IS_OUTDATED = isOutdated();
-
-        logger.debug("VersionController has been initialized.");
-        logger.debug("[VERCONTROLLER] Version: " + version);
-
+        this.version = plugin.getDescription().getVersion().replaceAll("^[^\\d]+", "");
         this.logger = logger;
+        IS_OUTDATED = isOutdated();
     }
 
     public String getLatestTagFromGitHub() {
@@ -34,39 +29,42 @@ public class VersionController {
             Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
             String response = scanner.hasNext() ? scanner.next() : "";
             scanner.close();
-
-            String latestTag = response.split("\"tag_name\":\"")[1].split("\"")[0];
-
-            return latestTag;
+            return response.split("\"tag_name\":\"")[1].split("\"")[0].replaceAll("^[^\\d]+", "");
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            return version;
         }
     }
 
     public int compareVersions(String version1, String version2) {
-        String[] parts1 = version1.split("\\.");
-        String[] parts2 = version2.split("\\.");
-
+        String[] parts1 = version1.split("[^\\da-zA-Z]+");
+        String[] parts2 = version2.split("[^\\da-zA-Z]+");
         int length = Math.max(parts1.length, parts2.length);
+
         for (int i = 0; i < length; i++) {
-            int part1 = i < parts1.length ? Integer.parseInt(parts1[i]) : 0;
-            int part2 = i < parts2.length ? Integer.parseInt(parts2[i]) : 0;
-            if (part1 < part2) {
-                return -1;
-            } else if (part1 > part2) {
-                return 1;
+            String p1 = i < parts1.length ? parts1[i] : "0";
+            String p2 = i < parts2.length ? parts2[i] : "0";
+
+            try {
+                int v1 = Integer.parseInt(p1);
+                int v2 = Integer.parseInt(p2);
+                if (v1 != v2) return Integer.compare(v1, v2);
+            } catch (NumberFormatException e) {
+                boolean p1Snapshot = p1.equalsIgnoreCase("SNAPSHOT");
+                boolean p2Snapshot = p2.equalsIgnoreCase("SNAPSHOT");
+                
+                if (p1Snapshot && !p2Snapshot) return -1;
+                if (!p1Snapshot && p2Snapshot) return 1;
+                if (p1Snapshot) continue;
+
+                int cmp = p1.compareTo(p2);
+                if (cmp != 0) return cmp;
             }
         }
         return 0;
     }
 
     public boolean isOutdated() {
-        // Use CompareVersions method to check if the plugin is outdated, among with the latest version from GitHub
-        return compareVersions(version, Objects.requireNonNull(getLatestTagFromGitHub())) < 0;
-    }
-
-    public String getVersion() {
-        return version;
+        String latest = getLatestTagFromGitHub();
+        return latest != null && compareVersions(version, latest) < 0;
     }
 }
