@@ -3,12 +3,9 @@
  */
 
 plugins {
-    id 'java-library'
-    id 'maven-publish'
     id 'java'
-    id 'eclipse'
     id "org.jetbrains.gradle.plugin.idea-ext" version "1.0.1"
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.gradleup.shadow' version '9.0.0-beta15'
 }
 
 repositories {
@@ -39,8 +36,8 @@ repositories {
 }
 
 dependencies {
-    api libs.bstats.bukkit
     compileOnly libs.spigot.api
+    implementation libs.bstats.bukkit
     implementation 'org.spongepowered:configurate-yaml:4.1.2'
     implementation 'com.google.inject:guice:7.0.0'
     implementation "net.kyori:adventure-text-serializer-plain:4.16.0"
@@ -53,7 +50,7 @@ dependencies {
 }
 
 group = 'com.github.kikisito'
-version = '2.2.2-SNAPSHOT'
+version = '2.2.2'
 description = 'An awesome plugin to add golden heads to your server!'
 java.sourceCompatibility = JavaVersion.VERSION_17
 
@@ -63,19 +60,15 @@ shadowJar {
     relocate 'org.bstats', 'com.github.kikisito.goldenheads.libs.bstats'
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from(components.java)
-        }
-    }
+tasks.withType(Jar).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
-tasks.withType(Javadoc) {
+tasks.withType(Javadoc).configureEach {
     options.encoding = 'UTF-8'
 }
 
