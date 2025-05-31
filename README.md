@@ -1,8 +1,8 @@
 # 🍎 GoldenHeads
 *A simple, configurable Bukkit/Spigot plugin by Kikisito for dropping and crafting golden player heads*
 
-**Supported Minecraft Versions:** 1.14 → 1.20.4  
-**Plugin Version:** 1.0.0
+**Supported Minecraft Versions:** 1.20.4+
+**Supported Server Software:** Paper (and forks), Folia
 
 ---
 
