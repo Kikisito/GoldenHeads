@@ -3,7 +3,7 @@
 
 [versions]
 bstats-bukkit = "1.7"
-spigot-api = "1.20.4-R0.1-SNAPSHOT"
+spigot-api = "1.21.5-R0.1-SNAPSHOT"
 
 [libraries]
 bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstats-bukkit" }
