@@ -34,7 +34,7 @@ We will acknowledge your report within a maximum **7 business days** (usually 3 
 
 - Always use the latest release.
 - Regularly check for security updates.
-- Review and follow our [Contributing Guidelines](./CONTRIBUTING.md) to help keep the project secure.
+- Review and follow our [Contributing Guidelines](docs/CONTRIBUTING.md) to help keep the project secure.
 
 ## Questions?
 
