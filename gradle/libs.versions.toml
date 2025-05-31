@@ -2,7 +2,7 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-bstats-bukkit = "1.7"
+bstats-bukkit = "3.1.0"
 spigot-api = "1.21.5-R0.1-SNAPSHOT"
 
 [libraries]
