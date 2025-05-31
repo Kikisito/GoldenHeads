@@ -1,15 +1,43 @@
-# 🍎 GoldenHeads - Kikisito
+# 🍎 GoldenHeads
+*A simple, configurable Bukkit/Spigot plugin by Kikisito for dropping and crafting golden player heads*
 
-GoldenHeads is a plugin supporting from 1.14 to 1.20.4 that allows you to get golden heads from players when you kill them (and craft the head). The plugin is very simple and easy to use, it is also very configurable.
+**Supported Minecraft Versions:** 1.14 → 1.20.4  
+**Plugin Version:** 1.0.0
 
+---
 
-## ✅ TODO
-| Status | Description                      |
-|-------|----------------------------------|
-| ✅     | Use Configured for config        |
-| ✅     | Add MiniMessage support          |
-| ✅     | Add reload and get command       |
-| ✅      | Fix delay setting                |
-| ✅     | Add customizable crafting recipe |
-| ❌      | Fix config.yml comments          |
+## 📚 Documentation
+For full usage, configuration examples and troubleshooting, see our [GitHub Wiki](https://github.com/Kikisito/GoldenHeads/wiki).
 
+## 🔄 Continuous Integration
+Check build status, test results and download artifacts on our [CI Pipeline](https://ci.redactado.com/job/GoldenHeads/)
+
+---
+
+## 🚀 Features
+- **Automatic Golden Head Drops**  
+  When one player kills another, a golden head (with the victim’s skin) is dropped.
+- **Custom Crafting Recipe**  
+  Define your own crafting layout and ingredients in `config.yml`.
+- **MiniMessage-Powered Messages**  
+  Use MiniMessage formatting (colors, placeholders) in all plugin messages.
+
+---
+
+## 🛠 Installation
+1. Download the latest `GoldenHeads.jar`.
+2. Place it into your server’s `plugins/` folder.
+3. Restart your server. Please refrain from using Plugin Managers like PlugMan, as they may cause issues.
+4. Tweak any settings in `config.yml`.
+5. Run `/goldenheads reload` to apply your changes immediately.
+
+---
+
+## Other links
+
+- 🐛 [Issues](https://github.com/Kikisito/GoldenHeads/issues) - Report bugs or request features
+- 🧪 [CI Pipeline](https://ci.redactado.com/job/GoldenHeads/) - Check build status and download artifacts
+- 📦 [Releases](https://github.com/Kikisito/GoldenHeads/releases) - Download specific versions
+- 🔍 [Wiki](https://github.com/Kikisito/GoldenHeads/wiki) - Full documentation and guides
+- ⚖️ [License](LICENSE) - License terms and conditions
+- 💫 [Contributing](docs/CONTRIBUTING.md) - How to contribute to this project
