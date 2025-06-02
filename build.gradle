@@ -38,7 +38,7 @@ repositories {
 dependencies {
     compileOnly libs.spigot.api
     implementation libs.bstats.bukkit
-    implementation 'org.spongepowered:configurate-yaml:4.1.2'
+    implementation 'org.spongepowered:configurate-yaml:4.2.0'
     implementation 'com.google.inject:guice:7.0.0'
     implementation "net.kyori:adventure-text-serializer-plain:4.16.0"
     implementation "net.kyori:adventure-text-serializer-legacy:4.16.0"
